@@ -5,6 +5,7 @@
 - 📈 **Tra cứu giá vàng**, tỷ giá ngoại tệ, giá tiền ảo theo thời gian thực.
 - ⏰ **Xem thời gian hiện tại** (Dương lịch & Âm lịch).
 - 📃 **Quản lý và lưu trữ lịch sử chat**.
+- 🖼️ **Hỗ trợ tạo ảnh**.
 - 🌐 **Hỗ trợ đa ngôn ngữ**.
 
 ---
@@ -17,6 +18,7 @@
 ✔️ **Theo dõi giá tiền ảo** từ Binance  
 ✔️ **Hệ thống giới hạn tin nhắn** theo giai đoạn  
 ✔️ **Hỗ trợ lịch sử chat** và quản lý tin nhắn  
+✔️ **Hỗ trợ tạo ảnh**  
 ✔️ **Hỗ trợ đa ngôn ngữ**  
 
 ---
@@ -81,6 +83,7 @@ behoa-telegram-bot/
 | `/info`    | Xem thông tin cá nhân |
 | `/vang`    | Xem giá vàng SJC & PNJ |
 | `/ngoaite` | Xem tỷ giá ngoại tệ |
+| `/image <description>` | Tạo hình ảnh theo mô tả |
 | `/tienao`  | Xem giá tiền ảo từ Binance |
 
 ---
@@ -108,10 +111,19 @@ python main.py
 
 ---
 
-## 📄 Giấy phép
-Dự án được phát hành theo [MIT License](https://www.facebook.com/SMLxuneo/).
+## 💡 Đóng góp
+Bạn có thể mở issue hoặc gửi pull request để cải thiện dự án. Nếu có thay đổi lớn, vui lòng mở issue trước để thảo luận.
 
+## 📞 Liên hệ
+- Telegram: [@smlnobita](https://t.me/smlnobita)
+
+## 📜 Giấy phép
+Dự án này được cấp phép theo MIT License. Xem thêm tại file LICENSE.
+
+## 🙌 Cảm ơn
+Xin gửi lời cảm ơn đến:  
+- 💰 **Binance, Vietcombank, và PNJ** vì các dịch vụ dữ liệu 
 ---
 
-## 🤝 Đóng góp
-Mọi đóng góp đều được chào đón! Vui lòng tạo **Issue** hoặc **Pull Request** trên GitHub. 🌟
+⚡ *Hãy đóng góp và cùng nhau phát triển dự án!* 🚀 
+

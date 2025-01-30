@@ -1,8 +1,8 @@
 import telebot
 import os
 import time
+import keywords
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ForceReply
-
 from config import Config, MessageLimits
 from models import UserState
 from enums import UserStage
@@ -23,6 +23,18 @@ class TelegramBot:
 
         if not os.path.exists(Config.HISTORY_DIR):
             os.makedirs(Config.HISTORY_DIR)
+
+        self.bot.set_my_commands([
+            telebot.types.BotCommand("start", "Khởi động bot"),
+            telebot.types.BotCommand("help", "Xem hướng dẫn sử dụng"),
+            telebot.types.BotCommand("clear", "Xóa lịch sử chat"),
+            telebot.types.BotCommand("time", "Xem thời gian hiện tại"),
+            telebot.types.BotCommand("info", "Xem thông tin của bạn"),
+            telebot.types.BotCommand("image", "Tạo hình ảnh từ mô tả"),
+            telebot.types.BotCommand("vang", "Xem giá vàng SJC và PNJ"),
+            telebot.types.BotCommand("ngoaite", "Xem tỷ giá ngoại tệ"),
+            telebot.types.BotCommand("tienao", "Xem giá tiền ảo")
+        ])
 
         self._register_handlers()
 
@@ -62,6 +74,7 @@ class TelegramBot:
         self.bot.message_handler(commands=['start'])(self.start_message)
         self.bot.message_handler(commands=['help'])(self.help_message)
         self.bot.message_handler(commands=['info'])(self.info_message)
+        self.bot.message_handler(commands=['image'])(self.image_message)
         self.bot.message_handler(commands=['clear'])(self.clear_message)
         self.bot.message_handler(commands=['time'])(self.time_message)
         self.bot.message_handler(commands=['vang'])(self.gold_price_message)
@@ -127,6 +140,90 @@ class TelegramBot:
             self.bot.send_message(
                 message.chat.id,
                 error_message,
+                parse_mode="Markdown"
+            )
+
+    def image_message(self, message):
+        """Xử lý lệnh /image"""
+        user_id = message.chat.id
+        user_state = self._get_user_state(user_id)
+
+        # Kiểm tra giới hạn tin nhắn và thời gian chờ
+        if not self._can_send_message(user_state):
+            self.bot.reply_to(
+                message,
+                "⏳ **Đợi một chút rồi tạo ảnh tiếp nhé!**",
+                parse_mode="Markdown"
+            )
+            return
+
+        if not self._check_message_limit(user_state):
+            menu = MessageHandler.create_menu_markup(user_state)
+            message_text = "⚠️ **Bạn đã đạt giới hạn tin nhắn cho giai đoạn này!**"
+            
+            if user_state.stage == UserStage.INITIAL:
+                message_text += "\nNhấn 'Tiếp tục nhắn' để được cấp thêm tin nhắn."
+            elif user_state.stage == UserStage.EXTENDED:
+                message_text += "\nNhập key để được cấp thêm tin nhắn."
+            
+            self.bot.reply_to(
+                message,
+                message_text,
+                parse_mode="Markdown",
+                reply_markup=menu
+            )
+            return
+
+        try:
+            # Extract prompt from message
+            if len(message.text.split()) < 2:
+                self.bot.reply_to(
+                    message,
+                    "⚠️ Vui lòng nhập mô tả hình ảnh sau lệnh /image\n" +
+                    "Ví dụ: `/image một chú mèo đang ngủ`",
+                    parse_mode="Markdown"
+                )
+                return
+
+            prompt = " ".join(message.text.split()[1:])
+            
+            # Send "processing" message
+            processing_msg = self.bot.reply_to(
+                message,
+                "🎨 **Đang tạo hình ảnh...**\n" +
+                "⏳ Vui lòng đợi trong giây lát!",
+                parse_mode="Markdown"
+            )
+
+            # Generate image
+            image_url = self.openai_handler.generate_image(prompt)
+            
+            if image_url:
+                # Cập nhật số lượt chat
+                user_state.last_message_time = time.time()
+                user_state.message_count += 1
+                
+                # Tính số tin nhắn còn lại
+                remaining = MessageHandler.get_remaining_messages(user_state)
+                
+                # Download and send image
+                self.bot.delete_message(message.chat.id, processing_msg.message_id)
+                self.bot.send_photo(
+                    message.chat.id,
+                    image_url,
+                    caption=f"🎨 *Hình ảnh được tạo từ mô tả:*\n`{prompt}`\n\n💬 Bạn còn {remaining} tin nhắn.",
+                    parse_mode="Markdown",
+                    reply_to_message_id=message.message_id
+                )
+            else:
+                raise Exception("Không thể tạo hình ảnh")
+
+        except Exception as e:
+            error_message = f"❌ Lỗi khi tạo hình ảnh: {str(e)}"
+            self.bot.edit_message_text(
+                error_message,
+                chat_id=message.chat.id,
+                message_id=processing_msg.message_id,
                 parse_mode="Markdown"
             )
 
@@ -210,6 +307,37 @@ class TelegramBot:
                 reply_markup=menu
             )
             return
+        
+        #behoa
+        text = message.text.lower()
+
+        if any(keyword in text for keyword in keywords.gold_keywords):
+            return self.gold_price_message(message)
+
+        if any(keyword in text for keyword in keywords.name_keywords):
+            return self.bot.send_message(
+            user_id,
+            "🤖 **Mình là BéHoà-4o, một chatbot AI sử dụng GPT-4o!**",
+            parse_mode="Markdown"
+            )
+
+        if any(keyword in text for keyword in keywords.ngoaite_keywords):
+            return self.exchange_rate_message(message)
+
+        if any(keyword in text for keyword in keywords.thoigian_keywords):
+            return self.time_message(message)
+
+        if any(keyword in text for keyword in keywords.tienao_keywords):
+            return self.crypto_price_message(message)
+        
+        if any(keyword in text for keyword in keywords.taohoa_keywords):
+            return self.bot.send_message(
+            user_id,
+            "🤖 **Mình là BéHoà-4o, một chatbot AI sử dụng GPT-4o!**\n"
+            "🤖 **Mình được tạo ra bởi @smlnobita!**",
+            parse_mode="Markdown"
+            )
+        #behoa
 
         user_state.last_message_time = time.time()
         user_state.message_count += 1
@@ -267,6 +395,9 @@ class TelegramBot:
             "• `/vang` - Xem giá vàng SJC và PNJ\n"
             "• `/ngoaite` - Xem tỷ giá ngoại tệ Vietcombank\n"
             "• `/tienao` - Xem giá tiền ảo trên Binance\n\n"
+            "**🎨 Tạo hình ảnh:**\n"
+            "• Sử dụng `/image <mô tả>` để tạo hình ảnh\n"
+            "• Ví dụ: `/image một chú mèo đang ngủ`\n\n"
             "**💬 Giới hạn chat:**\n"
             f"• Giai đoạn 1: {MessageLimits.INITIAL_LIMIT} tin nhắn\n"
             f"• Giai đoạn 2: {MessageLimits.EXTENDED_LIMIT} tin nhắn (sau khi nhấn 'Tiếp tục nhắn')\n"
@@ -342,6 +473,7 @@ class TelegramBot:
             "• `/vang` - Xem giá vàng SJC và PNJ\n"
             "• `/ngoaite` - Xem tỷ giá ngoại tệ\n"
             "• `/tienao` - Xem giá tiền ảo\n"
+            "• `/image <mô tả>` để tạo hình ảnh\n"
             "• `/info` - Xem thông tin của bạn\n" 
             "liên hệ: @smlnobita (Telegram)\n\n"
             "🚀 **Hãy bắt đầu trò chuyện ngay!**"
