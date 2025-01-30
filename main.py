@@ -62,7 +62,8 @@ class TelegramBot:
             "• `/time` - Xem thời gian hiện tại\n"
             "• `/vang` - Xem giá vàng SJC và PNJ\n"
             "• `/ngoaite` - Xem tỷ giá ngoại tệ\n"
-            "• `/tienao` - Xem giá tiền ảo\n\n"
+            "• `/tienao` - Xem giá tiền ảo\n"
+            "liên hệ: @smlnobita (Telegram)\n\n"
             "🚀 **Hãy bắt đầu trò chuyện ngay!**"
         )
         
@@ -93,6 +94,7 @@ class TelegramBot:
             f"• Giai đoạn 3: {MessageLimits.FINAL_LIMIT} tin nhắn (sau khi nhập key)\n"
             f"• Thời gian chờ giữa các tin nhắn: {MessageLimits.COOLDOWN} giây\n\n"
             "**🔍 Lưu ý:**\n"
+            "• liên hệ: @smlnobita (Telegram)\n"
             "• Bot có thể hiểu và trả lời bằng nhiều ngôn ngữ\n"
             "• Lịch sử chat sẽ được lưu cho đến khi bạn xóa hoặc khởi động lại\n"
             "• Có thể sử dụng nút menu để thực hiện các thao tác nhanh"
