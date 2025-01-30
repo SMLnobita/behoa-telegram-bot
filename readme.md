@@ -121,7 +121,7 @@ class MessageLimits:
 
 ## 📄 Giấy phép
 
-[MIT License](LICENSE)
+[MIT License](https://www.facebook.com/SMLxuneo/)
 
 ## 👥 Đóng góp
 
