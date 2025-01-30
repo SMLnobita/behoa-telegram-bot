@@ -69,7 +69,7 @@ class GoldPriceTracker:
             raise Exception(f"Lỗi khi lấy giá vàng: {str(e)}")
 
     def format_gold_prices(self, gold_data: List[Dict]) -> str:
-        message = "💰 **Giá vàng PNJ hiện tại**\n\n"
+        message = "💰 **Giá vàng SJC và PNJ hiện tại**\n\n"
 
         for khu_vuc in self.KHU_VUC_ORDER:
             region_data = [d for d in gold_data if d["khu_vuc"] == khu_vuc]

@@ -14,7 +14,7 @@ BéHoà-4o là một chatbot Telegram thông minh được xây dựng với GPT
 
 ## 📋 Yêu cầu hệ thống
 
-- Python 3.8+
+- Python 3.10+
 - pip (Python package manager)
 
 ## 🔧 Cài đặt
@@ -22,7 +22,7 @@ BéHoà-4o là một chatbot Telegram thông minh được xây dựng với GPT
 1. Clone repository:
 ```bash
 git clone https://github.com/yourusername/behoa-4o-bot.git
-cd behoa-4o-bot
+cd behoa-telegram-bot
 ```
 
 2. Cài đặt các thư viện cần thiết:
@@ -39,8 +39,8 @@ OPENAI_API_KEY=your_openai_api_key
 ## 🎯 Cấu trúc dự án
 
 ```
-behoa-4o-bot/
-├── config.py           # Cấu hình và biến môi trường
+behoa-telegram-bot/
+├── config.py          # Cấu hình và biến môi trường
 ├── enums.py           # Các enum và hằng số
 ├── main.py            # File chính của bot
 ├── models.py          # Các model dữ liệu

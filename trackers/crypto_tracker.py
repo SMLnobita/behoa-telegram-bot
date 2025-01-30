@@ -32,11 +32,11 @@ class CryptoPriceTracker:
                 
                 # Format price based on value
                 if price < 1:
-                    formatted_price = f"${price:.4f}"
+                    formatted_price = f"${price:.4f} USD"
                 elif price < 100:
-                    formatted_price = f"${price:.2f}"
+                    formatted_price = f"${price:.2f} USD"
                 else:
-                    formatted_price = f"${price:,.0f}"
+                    formatted_price = f"${price:,.0f} USD"
                 
                 prices[symbol] = {
                     "name": name,
