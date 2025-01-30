@@ -1,5 +1,6 @@
 # utils/message_handler.py
 from datetime import datetime
+import lunarcalendar
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import time
 import os
@@ -14,8 +15,22 @@ class MessageHandler:
     @staticmethod
     def format_time_message():
         current_time = MessageHandler.get_current_time_vn()
-        weekday_vn = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"][current_time.weekday()]
-        return f"🕐 {weekday_vn}, {current_time.strftime('%d/%m/%Y %H:%M:%S')}"
+        WEEKDAYS = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"]
+        weekday_vn = WEEKDAYS[current_time.weekday()]
+        
+        # Chuyển đổi sang lịch âm
+        lunar_date = lunarcalendar.Converter.Solar2Lunar(current_time)
+        
+        # Lấy múi giờ UTC
+        utc_offset = current_time.strftime('%z')
+        hours_offset = int(utc_offset[:-2]) if utc_offset else 7  # Mặc định UTC+7 nếu không có
+
+        return (
+            f"🕐 **{weekday_vn},** `ngày {current_time.day:02d} tháng {current_time.month:02d} năm {current_time.year}`\n"
+            f"⏰ **Giờ:** `{current_time.hour:02d}:{current_time.minute:02d}:{current_time.second:02d}`\n"
+            f"🌙 **Âm lịch:** `Ngày {lunar_date.day:02d} tháng {lunar_date.month:02d} năm {lunar_date.year}`\n"
+            f"🌍 **Múi giờ:** `UTC{'+' if hours_offset >= 0 else ''}{hours_offset}`"
+        )
 
     @staticmethod
     def create_menu_markup(user_state):
