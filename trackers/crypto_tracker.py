@@ -1,4 +1,3 @@
-# trackers/crypto_tracker.py
 import requests
 from datetime import datetime
 import pytz
@@ -45,15 +44,21 @@ class CryptoPriceTracker:
                 
             return prices
         except Exception as e:
-            raise Exception(f"Lỗi khi lấy giá tiền ảo: {str(e)}")
+            raise Exception(f"🚨 Lỗi khi lấy giá tiền ảo: {str(e)}")
 
     def format_crypto_prices(self, prices: Dict) -> str:
-        message = "💎 **Giá tiền ảo trên Binance**\n\n"
+        message = "🚀 **Cập nhật giá tiền ảo trên Binance**\n\n"
+        
+        icons = {
+            "BTC": "🟠", "ETH": "🟣", "BNB": "🟡",
+            "XRP": "🔵", "TRX": "🔴", "SOL": "🟢", "DOGE": "🟤"
+        }
         
         for symbol, data in prices.items():
-            message += f"**{symbol} - {data['name']}**\n"
-            message += f"💰 Giá: {data['price']}\n\n"
+            icon = icons.get(symbol, "💰")
+            message += f"{icon} **{symbol} - {data['name']}**\n"
+            message += f"💵 Giá: `{data['price']}`\n\n"
         
         current_time = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
-        message += f"🕐 Cập nhật: {current_time.strftime('%d/%m/%Y %H:%M:%S')}"
+        message += f"🕒 **Cập nhật:** `{current_time.strftime('%d/%m/%Y %H:%M:%S')}` 🇻🇳"
         return message
