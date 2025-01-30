@@ -1,42 +1,51 @@
-# BéHoà-4o Telegram Bot
+# 🤖 BéHoà-4o Telegram Bot
 
-BéHoà-4o là một chatbot Telegram thông minh được xây dựng với GPT-4o, cung cấp khả năng chat AI và nhiều tính năng hữu ích khác. Bot có thể trò chuyện tự nhiên, tra cứu giá vàng, tỷ giá ngoại tệ và giá tiền ảo theo thời gian thực.
+**BéHoà-4o** là một chatbot Telegram thông minh sử dụng GPT-4o, cung cấp khả năng trò chuyện tự nhiên cùng nhiều tiện ích như tra cứu giá vàng, tỷ giá ngoại tệ, giá tiền ảo theo thời gian thực, và hiển thị thông tin người dùng.
+
+---
 
 ## 🚀 Tính năng chính
 
-- Chat AI thông minh với GPT-4o
-- Tra cứu giá vàng SJC và PNJ theo khu vực
-- Xem tỷ giá ngoại tệ Vietcombank
-- Theo dõi giá tiền ảo từ Binance
-- Hệ thống giới hạn tin nhắn theo giai đoạn
-- Lưu trữ và quản lý lịch sử chat
-- Hỗ trợ đa ngôn ngữ
+✔️ Chat AI thông minh với GPT-4o  
+✔️ Tra cứu giá vàng SJC & PNJ theo khu vực  
+✔️ Xem tỷ giá ngoại tệ từ Vietcombank  
+✔️ Theo dõi giá tiền ảo từ Binance  
+✔️ Hệ thống giới hạn tin nhắn theo giai đoạn  
+✔️ Lưu trữ và quản lý lịch sử chat  
+✔️ Hỗ trợ đa ngôn ngữ  
 
-## 📋 Yêu cầu hệ thống
+---
 
-- Python 3.10+
-- pip (Python package manager)
+## 🛠 Yêu cầu hệ thống
 
-## 🔧 Cài đặt
+- **Python** 3.10+
+- **pip** (Python package manager)
 
-1. Clone repository:
+---
+
+## 🔧 Hướng dẫn cài đặt
+
+1️⃣ **Clone repository**  
 ```bash
 git clone https://github.com/yourusername/behoa-4o-bot.git
 cd behoa-telegram-bot
 ```
 
-2. Cài đặt các thư viện cần thiết:
+2️⃣ **Cài đặt thư viện cần thiết**  
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Tạo file `.env` và cấu hình các biến môi trường:
+3️⃣ **Cấu hình biến môi trường**  
+Tạo file `.env` và thêm thông tin sau:
 ```env
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 OPENAI_API_KEY=your_openai_api_key
 ```
 
-## 🎯 Cấu trúc dự án
+---
+
+## 📂 Cấu trúc dự án
 
 ```
 behoa-telegram-bot/
@@ -44,70 +53,81 @@ behoa-telegram-bot/
 ├── enums.py           # Các enum và hằng số
 ├── main.py            # File chính của bot
 ├── models.py          # Các model dữ liệu
-├── trackers/          # Các module theo dõi giá
+├── trackers/          # Theo dõi giá cả
 │   ├── crypto_tracker.py
 │   ├── currency_tracker.py
 │   └── gold_tracker.py
-├── utils/             # Các tiện ích
+├── utils/             # Tiện ích
 │   ├── message_handler.py
 │   └── openai_handler.py
-└── history/           # Thư mục lưu lịch sử chat
+└── history/           # Lưu trữ lịch sử chat
 ```
+
+---
 
 ## 💬 Các lệnh hỗ trợ
 
-- `/start` - Khởi động bot và xóa lịch sử chat
-- `/help` - Hiển thị hướng dẫn sử dụng
-- `/clear` - Xóa lịch sử chat hiện tại
-- `/time` - Xem thời gian hiện tại
-- `/vang` - Xem giá vàng SJC và PNJ
-- `/ngoaite` - Xem tỷ giá ngoại tệ
-- `/tienao` - Xem giá tiền ảo
+| Lệnh       | Mô tả |
+|------------|------------------------------------------------|
+| `/start`   | Khởi động bot & xóa lịch sử chat |
+| `/help`    | Hiển thị hướng dẫn sử dụng |
+| `/clear`   | Xóa lịch sử chat hiện tại |
+| `/time`    | Xem thời gian hiện tại |
+| `/info`    | Xem thông tin cá nhân |
+| `/vang`    | Xem giá vàng SJC & PNJ |
+| `/ngoaite` | Xem tỷ giá ngoại tệ |
+| `/tienao`  | Xem giá tiền ảo từ Binance |
 
-## ⚙️ Giới hạn tin nhắn
+---
 
-Bot sử dụng hệ thống giới hạn tin nhắn 3 giai đoạn:
+## ⚙️ Hệ thống giới hạn tin nhắn
 
-1. **Giai đoạn 1 (Initial)**:
-   - Giới hạn: 10 tin nhắn
+BéHoà-4o sử dụng hệ thống giới hạn tin nhắn theo giai đoạn:
+
+🔹 **Giai đoạn 1 (Initial)**  
+   - Giới hạn: 10 tin nhắn  
    - Có thể mở rộng bằng nút "Tiếp tục nhắn"
 
-2. **Giai đoạn 2 (Extended)**:
-   - Giới hạn: 20 tin nhắn
+🔹 **Giai đoạn 2 (Extended)**  
+   - Giới hạn: 20 tin nhắn  
    - Yêu cầu nhập key để tiếp tục
 
-3. **Giai đoạn 3 (Key Used)**:
-   - Giới hạn: 35 tin nhắn
+🔹 **Giai đoạn 3 (Key Used)**  
+   - Giới hạn: 35 tin nhắn  
    - Giai đoạn cuối cùng
 
-## 🚦 Khởi chạy
+---
 
-Để khởi động bot:
+## 🚀 Khởi chạy bot
 
 ```bash
 python main.py
 ```
 
+---
+
 ## 🔍 Lưu ý
 
-- Thời gian chờ giữa các tin nhắn: 3 giây
-- Lịch sử chat được lưu cho đến khi xóa hoặc khởi động lại
-- Bot tự động cập nhật thời gian Việt Nam
-- Các API được sử dụng:
-  - OpenAI API cho GPT-4o
-  - Binance API cho giá tiền ảo
-  - Vietcombank API cho tỷ giá ngoại tệ
-  - PNJ API cho giá vàng
+✔️ Thời gian chờ giữa các tin nhắn: **3 giây**  
+✔️ Lịch sử chat được lưu cho đến khi xóa hoặc khởi động lại  
+✔️ Bot tự động cập nhật theo **giờ Việt Nam**  
+✔️ API được sử dụng:  
+   - **OpenAI API** (GPT-4o)  
+   - **Binance API** (Giá tiền ảo)  
+   - **Vietcombank API** (Tỷ giá ngoại tệ)  
+   - **PNJ API** (Giá vàng)
 
-## 🛠️ Phát triển
+---
 
-### Thêm tính năng mới
+## 🛠 Phát triển
 
-1. Tạo module mới trong thư mục phù hợp
-2. Cập nhật hàm `_register_handlers()` trong `main.py`
-3. Thêm logic xử lý trong class `TelegramBot`
+### 📌 Thêm tính năng mới
 
-### Cập nhật giới hạn tin nhắn
+1️⃣ Tạo module mới trong thư mục phù hợp  
+2️⃣ Cập nhật hàm `_register_handlers()` trong `main.py`  
+3️⃣ Thêm logic xử lý trong class `TelegramBot`
+
+### ⚙️ Cập nhật giới hạn tin nhắn
 
 Chỉnh sửa các giá trị trong `config.py`:
 ```python
@@ -119,10 +139,15 @@ class MessageLimits:
     VALID_KEY = "Behoane"
 ```
 
+---
+
 ## 📄 Giấy phép
 
-[MIT License](https://www.facebook.com/SMLxuneo/)
+Dự án được phát hành theo [MIT License](https://www.facebook.com/SMLxuneo/).
 
-## 👥 Đóng góp
+---
 
-Mọi đóng góp đều được chào đón! Vui lòng tạo issue hoặc pull request.
+## 🤝 Đóng góp
+
+💡 Mọi đóng góp đều được chào đón!  
+Vui lòng tạo **Issue** hoặc **Pull Request** trên GitHub.

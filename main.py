@@ -26,16 +26,42 @@ class TelegramBot:
 
         self._register_handlers()
 
-    def run(self):
-        """Khởi chạy bot"""
-        print("🚀 Chatbot GPT-4o trên Telegram đang chạy...")
-        print(f"⏰ Khởi động lúc: {MessageHandler.format_time_message()}")
-        self.bot.polling()
+    def _can_send_message(self, user_state):
+        """Kiểm tra xem người dùng có thể gửi tin nhắn không"""
+        current_time = time.time()
+        if current_time - user_state.last_message_time < MessageLimits.COOLDOWN:
+            return False
+        return True
+
+    def _check_message_limit(self, user_state):
+        """Kiểm tra giới hạn tin nhắn dựa trên trạng thái"""
+        count = user_state.message_count
+        stage = user_state.stage
+
+        if stage == UserStage.INITIAL and count >= MessageLimits.INITIAL_LIMIT:
+            return False
+        elif stage == UserStage.EXTENDED and count >= MessageLimits.EXTENDED_LIMIT:
+            return False
+        elif stage == UserStage.KEY_USED and count >= MessageLimits.FINAL_LIMIT:
+            return False
+        return True
+
+    def _clear_user_data(self, user_id):
+        """Xóa toàn bộ dữ liệu của người dùng"""
+        MessageHandler.clear_chat_history(user_id)
+        self.users[user_id] = UserState()
+
+    def _get_user_state(self, user_id):
+        """Lấy hoặc tạo mới trạng thái người dùng"""
+        if user_id not in self.users:
+            self.users[user_id] = UserState()
+        return self.users[user_id]
 
     def _register_handlers(self):
         """Đăng ký tất cả các handlers cho bot"""
         self.bot.message_handler(commands=['start'])(self.start_message)
         self.bot.message_handler(commands=['help'])(self.help_message)
+        self.bot.message_handler(commands=['info'])(self.info_message)
         self.bot.message_handler(commands=['clear'])(self.clear_message)
         self.bot.message_handler(commands=['time'])(self.time_message)
         self.bot.message_handler(commands=['vang'])(self.gold_price_message)
@@ -43,140 +69,6 @@ class TelegramBot:
         self.bot.message_handler(commands=['tienao'])(self.crypto_price_message)
         self.bot.callback_query_handler(func=lambda call: True)(self.callback_handler)
         self.bot.message_handler(func=lambda message: True)(self.handle_message)
-
-    def start_message(self, message):
-        """Xử lý lệnh /start"""
-        user_id = message.chat.id
-        self._clear_user_data(user_id)
-        
-        text = (
-            "🤖 **Chào mừng bạn đến với BéHoà-4o trên Telegram!**\n\n"
-            f"{MessageHandler.format_time_message()}\n\n"
-            "🔹 Bạn có thể bắt đầu chat ngay.\n"
-            "🔹 Sử dụng `/help` để xem hướng dẫn chi tiết.\n"
-            "🔹 Lịch sử chat sẽ được lưu, nhưng sẽ bị xóa khi bạn nhập `/start`.\n\n"
-            "**📌 Các lệnh thường dùng:**\n"
-            "• Gõ tin nhắn bất kỳ để tôi trả lời\n"
-            "• `/help` - Xem hướng dẫn đầy đủ\n"
-            "• `/clear` - Xóa lịch sử chat\n"
-            "• `/time` - Xem thời gian hiện tại\n"
-            "• `/vang` - Xem giá vàng SJC và PNJ\n"
-            "• `/ngoaite` - Xem tỷ giá ngoại tệ\n"
-            "• `/tienao` - Xem giá tiền ảo\n"
-            "liên hệ: @smlnobita (Telegram)\n\n"
-            "🚀 **Hãy bắt đầu trò chuyện ngay!**"
-        )
-        
-        markup = InlineKeyboardMarkup(row_width=2)
-        markup.add(
-            InlineKeyboardButton("🚀 Bắt đầu", callback_data="start"),
-            InlineKeyboardButton("🧹 Xóa lịch sử", callback_data="clear")
-        )
-        
-        self.bot.send_message(message.chat.id, text, parse_mode="Markdown", reply_markup=markup)
-
-    def help_message(self, message):
-        """Xử lý lệnh /help"""
-        help_text = (
-            "🤖 **Hướng dẫn sử dụng BéHoà-4o Bot**\n\n"
-            "**📝 Các lệnh cơ bản:**\n"
-            "• `/start` - Khởi động bot và xóa lịch sử chat\n"
-            "• `/help` - Hiển thị hướng dẫn sử dụng\n"
-            "• `/clear` - Xóa lịch sử chat hiện tại\n"
-            "• `/time` - Xem thời gian hiện tại\n\n"
-            "**💹 Tra cứu giá:**\n"
-            "• `/vang` - Xem giá vàng SJC và PNJ\n"
-            "• `/ngoaite` - Xem tỷ giá ngoại tệ Vietcombank\n"
-            "• `/tienao` - Xem giá tiền ảo trên Binance\n\n"
-            "**💬 Giới hạn chat:**\n"
-            f"• Giai đoạn 1: {MessageLimits.INITIAL_LIMIT} tin nhắn\n"
-            f"• Giai đoạn 2: {MessageLimits.EXTENDED_LIMIT} tin nhắn (sau khi nhấn 'Tiếp tục nhắn')\n"
-            f"• Giai đoạn 3: {MessageLimits.FINAL_LIMIT} tin nhắn (sau khi nhập key)\n"
-            f"• Thời gian chờ giữa các tin nhắn: {MessageLimits.COOLDOWN} giây\n\n"
-            "**🔍 Lưu ý:**\n"
-            "• liên hệ: @smlnobita (Telegram)\n"
-            "• Bot có thể hiểu và trả lời bằng nhiều ngôn ngữ\n"
-            "• Lịch sử chat sẽ được lưu cho đến khi bạn xóa hoặc khởi động lại\n"
-            "• Có thể sử dụng nút menu để thực hiện các thao tác nhanh"
-        )
-        
-        self.bot.send_message(
-            message.chat.id,
-            help_text,
-            parse_mode="Markdown"
-        )
-
-    def clear_message(self, message):
-        """Xử lý lệnh /clear"""
-        user_id = message.chat.id
-        self._clear_user_data(user_id)
-        self.bot.send_message(
-            user_id,
-            "🧹 **Lịch sử chat đã được xóa!** Bạn có thể tiếp tục chat mới.",
-            parse_mode="Markdown"
-        )
-
-    def time_message(self, message):
-        """Xử lý lệnh /time"""
-        self.bot.send_message(
-            message.chat.id,
-            MessageHandler.format_time_message(),
-            parse_mode="Markdown"
-        )
-
-    def gold_price_message(self, message):
-        """Xử lý lệnh /vang"""
-        try:
-            gold_data = self.gold_tracker.fetch_gold_prices()
-            formatted_message = self.gold_tracker.format_gold_prices(gold_data)
-            self.bot.send_message(
-                message.chat.id,
-                formatted_message,
-                parse_mode="Markdown"
-            )
-        except Exception as e:
-            error_message = f"❌ {str(e)}"
-            self.bot.send_message(
-                message.chat.id,
-                error_message,
-                parse_mode="Markdown"
-            )
-
-    def exchange_rate_message(self, message):
-        """Xử lý lệnh /ngoaite"""
-        try:
-            rates = self.currency_tracker.fetch_exchange_rates()
-            formatted_message = self.currency_tracker.format_exchange_rates(rates)
-            self.bot.send_message(
-                message.chat.id,
-                formatted_message,
-                parse_mode="Markdown"
-            )
-        except Exception as e:
-            error_message = f"❌ {str(e)}"
-            self.bot.send_message(
-                message.chat.id,
-                error_message,
-                parse_mode="Markdown"
-            )
-
-    def crypto_price_message(self, message):
-        """Xử lý lệnh /tienao"""
-        try:
-            crypto_data = self.crypto_tracker.fetch_crypto_prices()
-            formatted_message = self.crypto_tracker.format_crypto_prices(crypto_data)
-            self.bot.send_message(
-                message.chat.id,
-                formatted_message,
-                parse_mode="Markdown"
-            )
-        except Exception as e:
-            error_message = f"❌ {str(e)}"
-            self.bot.send_message(
-                message.chat.id,
-                error_message,
-                parse_mode="Markdown"
-            )
 
     def callback_handler(self, call):
         """Xử lý callback từ các nút"""
@@ -208,6 +100,70 @@ class TelegramBot:
                 user_id,
                 "🔑 Vui lòng nhập key để được cấp thêm tin nhắn:",
                 reply_markup=ForceReply()
+            )
+
+    def clear_message(self, message):
+        """Xử lý lệnh /clear"""
+        user_id = message.chat.id
+        self._clear_user_data(user_id)
+        self.bot.send_message(
+            user_id,
+            "🧹 **Lịch sử chat đã được xóa!** Bạn có thể tiếp tục chat mới.",
+            parse_mode="Markdown"
+        )
+
+    def crypto_price_message(self, message):
+        """Xử lý lệnh /tienao"""
+        try:
+            crypto_data = self.crypto_tracker.fetch_crypto_prices()
+            formatted_message = self.crypto_tracker.format_crypto_prices(crypto_data)
+            self.bot.send_message(
+                message.chat.id,
+                formatted_message,
+                parse_mode="Markdown"
+            )
+        except Exception as e:
+            error_message = f"❌ {str(e)}"
+            self.bot.send_message(
+                message.chat.id,
+                error_message,
+                parse_mode="Markdown"
+            )
+
+    def exchange_rate_message(self, message):
+        """Xử lý lệnh /ngoaite"""
+        try:
+            rates = self.currency_tracker.fetch_exchange_rates()
+            formatted_message = self.currency_tracker.format_exchange_rates(rates)
+            self.bot.send_message(
+                message.chat.id,
+                formatted_message,
+                parse_mode="Markdown"
+            )
+        except Exception as e:
+            error_message = f"❌ {str(e)}"
+            self.bot.send_message(
+                message.chat.id,
+                error_message,
+                parse_mode="Markdown"
+            )
+
+    def gold_price_message(self, message):
+        """Xử lý lệnh /vang"""
+        try:
+            gold_data = self.gold_tracker.fetch_gold_prices()
+            formatted_message = self.gold_tracker.format_gold_prices(gold_data)
+            self.bot.send_message(
+                message.chat.id,
+                formatted_message,
+                parse_mode="Markdown"
+            )
+        except Exception as e:
+            error_message = f"❌ {str(e)}"
+            self.bot.send_message(
+                message.chat.id,
+                error_message,
+                parse_mode="Markdown"
             )
 
     def handle_message(self, message):
@@ -297,36 +253,115 @@ class TelegramBot:
                 parse_mode="Markdown"
             )
 
-    def _get_user_state(self, user_id):
-        """Lấy hoặc tạo mới trạng thái người dùng"""
-        if user_id not in self.users:
-            self.users[user_id] = UserState()
-        return self.users[user_id]
+    def help_message(self, message):
+        """Xử lý lệnh /help"""
+        help_text = (
+            "🤖 **Hướng dẫn sử dụng BéHoà-4o Bot**\n\n"
+            "**📝 Các lệnh cơ bản:**\n"
+            "• `/start` - Khởi động bot và xóa lịch sử chat\n"
+            "• `/help` - Hiển thị hướng dẫn sử dụng\n"
+            "• `/clear` - Xóa lịch sử chat hiện tại\n"
+            "• `/time` - Xem thời gian hiện tại\n"
+            "• `/info` - Xem thông tin của bạn\n\n"
+            "**💹 Tra cứu giá:**\n"
+            "• `/vang` - Xem giá vàng SJC và PNJ\n"
+            "• `/ngoaite` - Xem tỷ giá ngoại tệ Vietcombank\n"
+            "• `/tienao` - Xem giá tiền ảo trên Binance\n\n"
+            "**💬 Giới hạn chat:**\n"
+            f"• Giai đoạn 1: {MessageLimits.INITIAL_LIMIT} tin nhắn\n"
+            f"• Giai đoạn 2: {MessageLimits.EXTENDED_LIMIT} tin nhắn (sau khi nhấn 'Tiếp tục nhắn')\n"
+            f"• Giai đoạn 3: {MessageLimits.FINAL_LIMIT} tin nhắn (sau khi nhập key)\n"
+            f"• Thời gian chờ giữa các tin nhắn: {MessageLimits.COOLDOWN} giây\n\n"
+            "**🔍 Lưu ý:**\n"
+            "• liên hệ: @smlnobita (Telegram)\n"
+            "• Bot có thể hiểu và trả lời bằng nhiều ngôn ngữ\n"
+            "• Lịch sử chat sẽ được lưu cho đến khi bạn xóa hoặc khởi động lại\n"
+            "• Có thể sử dụng nút menu để thực hiện các thao tác nhanh"
+        )
+        
+        self.bot.send_message(
+            message.chat.id,
+            help_text,
+            parse_mode="Markdown"
+        )
 
-    def _can_send_message(self, user_state):
-        """Kiểm tra xem người dùng có thể gửi tin nhắn không"""
-        current_time = time.time()
-        if current_time - user_state.last_message_time < MessageLimits.COOLDOWN:
-            return False
-        return True
+    def info_message(self, message):
+        """Xử lý lệnh /info"""
+        try:
+            user = message.from_user
+            info = (
+                "✨ **THÔNG TIN NGƯỜI DÙNG** ✨\n\n"
+                f"🆔 **ID:** `{user.id}`\n"
+                f"👤 **Username:** @{user.username if user.username else 'Không có'}\n"
+                f"📛 **Tên:** {user.first_name} {user.last_name if user.last_name else ''}\n"
+                f"🌐 **Ngôn ngữ:** {user.language_code if user.language_code else 'Không xác định'}\n"
+                "━━━━━━━━━━━━━━━━━━━━\n"
+                "📌 Hãy lưu lại thông tin này nếu cần thiết!"
+            )
 
-    def _check_message_limit(self, user_state):
-        """Kiểm tra giới hạn tin nhắn dựa trên trạng thái"""
-        count = user_state.message_count
-        stage = user_state.stage
+            self.bot.send_message(
+                message.chat.id,
+                info,
+                parse_mode="Markdown"
+            )
+        except Exception as e:
+            error_message = (
+                "🚨 **LỖI!** 🚨\n"
+                f"❌ Không thể lấy thông tin do lỗi sau:\n"
+                f"`{str(e)}`\n\n"
+                "⚙️ Vui lòng thử lại sau!"
+            )
+            self.bot.send_message(
+                message.chat.id,
+                error_message,
+                parse_mode="Markdown"
+            )
 
-        if stage == UserStage.INITIAL and count >= MessageLimits.INITIAL_LIMIT:
-            return False
-        elif stage == UserStage.EXTENDED and count >= MessageLimits.EXTENDED_LIMIT:
-            return False
-        elif stage == UserStage.KEY_USED and count >= MessageLimits.FINAL_LIMIT:
-            return False
-        return True
+    def run(self):
+        """Khởi chạy bot"""
+        print("🚀 Chatbot GPT-4o trên Telegram đang chạy...")
+        print(f"⏰ Khởi động lúc: {MessageHandler.format_time_message()}")
+        self.bot.polling()
 
-    def _clear_user_data(self, user_id):
-        """Xóa toàn bộ dữ liệu của người dùng"""
-        MessageHandler.clear_chat_history(user_id)
-        self.users[user_id] = UserState()
+    def start_message(self, message):
+        """Xử lý lệnh /start"""
+        user_id = message.chat.id
+        self._clear_user_data(user_id)
+        
+        text = (
+            "🤖 **Chào mừng bạn đến với BéHoà-4o trên Telegram!**\n\n"
+            f"{MessageHandler.format_time_message()}\n\n"
+            "🔹 Bạn có thể bắt đầu chat ngay.\n"
+            "🔹 Sử dụng `/help` để xem hướng dẫn chi tiết.\n"
+            "🔹 Lịch sử chat sẽ được lưu, nhưng sẽ bị xóa khi bạn nhập `/start`.\n\n"
+            "**📌 Các lệnh thường dùng:**\n"
+            "• Gõ tin nhắn bất kỳ để tôi trả lời\n"
+            "• `/help` - Xem hướng dẫn đầy đủ\n"
+            "• `/clear` - Xóa lịch sử chat\n"
+            "• `/time` - Xem thời gian hiện tại\n"
+            "• `/vang` - Xem giá vàng SJC và PNJ\n"
+            "• `/ngoaite` - Xem tỷ giá ngoại tệ\n"
+            "• `/tienao` - Xem giá tiền ảo\n"
+            "• `/info` - Xem thông tin của bạn\n" 
+            "liên hệ: @smlnobita (Telegram)\n\n"
+            "🚀 **Hãy bắt đầu trò chuyện ngay!**"
+        )
+        
+        markup = InlineKeyboardMarkup(row_width=2)
+        markup.add(
+            InlineKeyboardButton("🚀 Bắt đầu", callback_data="start"),
+            InlineKeyboardButton("🧹 Xóa lịch sử", callback_data="clear")
+        )
+        
+        self.bot.send_message(message.chat.id, text, parse_mode="Markdown", reply_markup=markup)
+
+    def time_message(self, message):
+        """Xử lý lệnh /time"""
+        self.bot.send_message(
+            message.chat.id,
+            MessageHandler.format_time_message(),
+            parse_mode="Markdown"
+        )
 
 if __name__ == "__main__":
     bot = TelegramBot()
