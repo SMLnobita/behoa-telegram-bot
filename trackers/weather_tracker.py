@@ -8,7 +8,7 @@ from config import Config
 class WeatherAirQualityTracker:
     def __init__(self):
         """Initialize the weather and air quality tracker"""
-        self.api_key = "NULL"
+        self.api_key = "46d84154e0037a53ad8727fb9ea7e493"
         self.weather_url = "https://api.openweathermap.org/data/2.5/weather"
         self.air_quality_url = "https://api.openweathermap.org/data/2.5/air_pollution"
         
