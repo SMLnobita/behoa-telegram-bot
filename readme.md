@@ -26,8 +26,8 @@ BéHoà-4o là một chatbot Telegram thông minh, được phát triển bằng
 ## 📦 Cài đặt
 ### 1️⃣ Clone repository
 ```bash
-git clone [repository-url]
-cd behoa-4o-bot
+git clone https://github.com/SMLnobita/behoa-telegram-bot.git
+cd behoa-telegram-bot
 ```
 ### 2️⃣ Cài đặt dependencies
 ```bash
@@ -52,7 +52,7 @@ python main.py
 
 ## 📂 Cấu trúc dự án
 ```
-behoa-4o-bot/
+behoa-telegram-bot/
 ├── config.py               # Cấu hình và biến môi trường
 ├── enums.py                # Định nghĩa các enum
 ├── keywords.py             # Danh sách từ khóa
@@ -99,9 +99,9 @@ BéHoà-4o có cơ chế giới hạn tin nhắn theo các giai đoạn:
 
 | Giai đoạn | Số tin nhắn | Điều kiện |
 |-----------|------------|------------|
-| **1** | 10 tin | Mặc định ban đầu |
-| **2** | 20 tin | Sau khi nhấn "Tiếp tục nhắn" |
-| **3** | 35 tin | Sau khi nhập key |
+| **1** | 5 tin | Mặc định ban đầu |
+| **2** | 10 tin | Sau khi nhấn "Tiếp tục nhắn" |
+| **3** | 15 tin | Sau khi nhập key |
 
 ⏳ **Thời gian chờ giữa các tin nhắn:** 3 giây
 
