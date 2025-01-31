@@ -34,7 +34,7 @@ thoigian_keywords = [
 ]
 
 name_keywords = [
-    "bạn tên gì", "ban ten gi", "tên gì", "ten gi", "tên của bạn", "ten cua ban",
+    "bạn tên gì", "ban ten gi", "tên của bạn", "ten cua ban",
     "bạn là ai", "ban la ai", "bot tên gì", "bot ten gi", "tên bot", "ten bot",
     "bot là ai", "bot la ai", "bạn là bot gì", "ban la bot gi", "bot gì", "bot gi",
     "tên bạn là gì", "ten ban la gi", "tên của bạn là gì", "ten cua ban la gi",
@@ -58,5 +58,5 @@ taohoa_keywords = [
     "bạn do ai lập trình", "ban do ai lap trinh",
     "ai đã lập trình bạn", "ai da lap trinh ban",
     "ai thiết kế bạn", "ai thiet ke ban",
-    "ai sáng lập ra bạn", "ai sang lap ra ban", "ai tạo ra bạn", "ai tao ra ban"
+    "ai sáng lập ra bạn", "ai sang lap ra ban", "ai tạo ra bạn", "ai tao ra ban", "bạn do ai lam ra", "ban do ai lam ra"
 ]

@@ -1,129 +1,135 @@
 # 🤖 BéHoà-4o Telegram Bot
 
-**BéHoà-4o** là chatbot Telegram thông minh sử dụng **GPT-4o**, cung cấp khả năng trò chuyện tự nhiên cùng nhiều tính năng tiện ích:
-
-- 📈 **Tra cứu giá vàng**, tỷ giá ngoại tệ, giá tiền ảo theo thời gian thực.
-- ⏰ **Xem thời gian hiện tại** (Dương lịch & Âm lịch).
-- 📃 **Quản lý và lưu trữ lịch sử chat**.
-- 🖼️ **Hỗ trợ tạo ảnh**.
-- 🌐 **Hỗ trợ đa ngôn ngữ**.
+BéHoà-4o là một chatbot Telegram thông minh, được phát triển bằng Python, tích hợp **GPT-4o** để hỗ trợ trò chuyện và nhiều tính năng hữu ích khác.
 
 ---
 
-## 🚀 Tính năng chính
-
-✔️ **Chat AI thông minh** với GPT-4o  
-✔️ **Tra cứu giá vàng** theo khu vực (SJC & PNJ)  
-✔️ **Xem tỷ giá ngoại tệ** từ Vietcombank  
-✔️ **Theo dõi giá tiền ảo** từ Binance  
-✔️ **Hệ thống giới hạn tin nhắn** theo giai đoạn  
-✔️ **Hỗ trợ lịch sử chat** và quản lý tin nhắn  
-✔️ **Hỗ trợ tạo ảnh**  
-✔️ **Hỗ trợ đa ngôn ngữ**  
+## 🚀 Tính năng nổi bật
+- 💬 **Chat thông minh** với GPT-4o
+- 🎨 **Tạo hình ảnh** với DALL·E 3
+- 💰 **Tra cứu giá vàng** (SJC & PNJ)
+- 💱 **Xem tỷ giá ngoại tệ** (Vietcombank)
+- 🪙 **Theo dõi giá tiền ảo** (Binance)
+- ⏰ **Xem thời gian** (Dương lịch & Âm lịch)
+- 🔄 **Quản lý tin nhắn** theo giai đoạn
 
 ---
 
 ## 🛠 Yêu cầu hệ thống
-
-- **Python** 3.10+
-- **pip** (Python package manager)
+- **Python** 3.8+
+- **pip** (Python package installer)
+- **Telegram Bot Token**
+- **OpenAI API Key**
 
 ---
 
-## 🔧 Hướng dẫn cài đặt
-
-### 1️⃣ Clone repository  
+## 📦 Cài đặt
+### 1️⃣ Clone repository
 ```bash
-git clone https://github.com/SMLnobita/behoa-telegram-bot.git
-cd behoa-telegram-bot
+git clone [repository-url]
+cd behoa-4o-bot
 ```
-
-### 2️⃣ Cài đặt thư viện cần thiết  
+### 2️⃣ Cài đặt dependencies
 ```bash
 pip install -r requirements.txt
 ```
-
-### 3️⃣ Cài đặt biến môi trường  
-Tạo file `.env` và thêm thông tin sau:
-```env
+### 3️⃣ Cấu hình biến môi trường
+Tạo tệp `.env` và thêm thông tin:
+```ini
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 OPENAI_API_KEY=your_openai_api_key
 ```
 
 ---
 
-## 📂 Cấu trúc dự án
-
-```
-behoa-telegram-bot/
-├── config.py          # Cấu hình và biến môi trường
-├── enums.py           # Các enum và hằng số
-├── main.py            # File chính của bot
-├── models.py          # Các model dữ liệu
-├── trackers/          # Theo dõi giá cả
-│   ├── crypto_tracker.py
-│   ├── currency_tracker.py
-│   └── gold_tracker.py
-├── utils/             # Tiện ích
-│   ├── message_handler.py
-│   └── openai_handler.py
-└── history/           # Lưu trữ lịch sử chat
-```
-
----
-
-## 💬 Các lệnh hỗ trợ
-
-| Lệnh       | Mô tả |
-|------------|------------------------------------------------|
-| `/start`   | Khởi động bot & xóa lịch sử chat |
-| `/help`    | Hiển thị hướng dẫn sử dụng |
-| `/clear`   | Xóa lịch sử chat hiện tại |
-| `/time`    | Xem thời gian hiện tại (Âm lịch & Dương lịch) |
-| `/info`    | Xem thông tin cá nhân |
-| `/vang`    | Xem giá vàng SJC & PNJ |
-| `/ngoaite` | Xem tỷ giá ngoại tệ |
-| `/image <description>` | Tạo hình ảnh theo mô tả |
-| `/tienao`  | Xem giá tiền ảo từ Binance |
-
----
-
-## ⚙️ Hệ thống giới hạn tin nhắn
-
-🔹 **Giai đoạn 1 (Initial)**  
-   - Giới hạn: **10 tin nhắn**  
-   - Mở rộng bằng nút "Tiếp tục nhắn"  
-
-🔹 **Giai đoạn 2 (Extended)**  
-   - Giới hạn: **20 tin nhắn**  
-   - Yêu cầu nhập key để tiếp tục  
-
-🔹 **Giai đoạn 3 (Key Used)**  
-   - Giới hạn: **35 tin nhắn**  
-   - Giai đoạn cuối cùng  
-
----
-
 ## 🚀 Khởi chạy bot
+Chạy lệnh sau để khởi động bot:
 ```bash
 python main.py
 ```
 
 ---
 
-## 💡 Đóng góp
-Bạn có thể mở issue hoặc gửi pull request để cải thiện dự án. Nếu có thay đổi lớn, vui lòng mở issue trước để thảo luận.
+## 📂 Cấu trúc dự án
+```
+behoa-4o-bot/
+├── config.py               # Cấu hình và biến môi trường
+├── enums.py                # Định nghĩa các enum
+├── keywords.py             # Danh sách từ khóa
+├── main.py                 # Điểm khởi động ứng dụng
+├── models.py               # Định nghĩa các model
+│
+├── handlers/               # Xử lý tin nhắn
+│   ├── callback_handler.py
+│   ├── chat_handler.py
+│   ├── message_commands.py
+│
+├── managers/               # Quản lý trạng thái
+│   └── user_manager.py
+│
+├── trackers/               # Theo dõi giá cả
+│   ├── crypto_tracker.py
+│   ├── currency_tracker.py
+│   ├── gold_tracker.py
+│
+└── utils/                  # Tiện ích
+    ├── message_handler.py
+    └── openai_handler.py
+```
 
-## 📞 Liên hệ
-- Telegram: [@smlnobita](https://t.me/smlnobita)
-
-## 📜 Giấy phép
-Dự án này được cấp phép theo MIT License. Xem thêm tại file LICENSE.
-
-## 🙌 Cảm ơn
-Xin gửi lời cảm ơn đến:  
-- 💰 **Binance, Vietcombank, và PNJ** vì các dịch vụ dữ liệu 
 ---
 
-⚡ *Hãy đóng góp và cùng nhau phát triển dự án!* 🚀 
+## 📝 Danh sách lệnh bot
+| Lệnh | Mô tả |
+|------------|-------------------------------|
+| `/start` | Khởi động bot và xóa lịch sử chat |
+| `/help` | Hướng dẫn sử dụng bot |
+| `/clear` | Xóa lịch sử chat |
+| `/time` | Xem thời gian hiện tại |
+| `/info` | Xem thông tin người dùng |
+| `/image <mô tả>` | Tạo hình ảnh từ mô tả |
+| `/vang` | Xem giá vàng (SJC & PNJ) |
+| `/ngoaite` | Xem tỷ giá ngoại tệ (Vietcombank) |
+| `/tienao` | Xem giá tiền ảo (Binance) |
+
+---
+
+## ⏳ Hệ thống giới hạn tin nhắn
+BéHoà-4o có cơ chế giới hạn tin nhắn theo các giai đoạn:
+
+| Giai đoạn | Số tin nhắn | Điều kiện |
+|-----------|------------|------------|
+| **1** | 10 tin | Mặc định ban đầu |
+| **2** | 20 tin | Sau khi nhấn "Tiếp tục nhắn" |
+| **3** | 35 tin | Sau khi nhập key |
+
+⏳ **Thời gian chờ giữa các tin nhắn:** 3 giây
+
+---
+
+## 🛠 Hướng dẫn phát triển
+### Thêm tính năng mới
+1. **Tạo handler mới** trong thư mục `handlers/`
+2. **Đăng ký handler** trong `main.py`
+3. **Cập nhật tài liệu** để người dùng biết cách sử dụng
+
+---
+
+## 🤝 Đóng góp
+Mọi đóng góp đều được chào đón! Hãy tạo **issue** hoặc **pull request** để giúp cải thiện bot.
+
+---
+
+## 📜 Giấy phép
+BéHoà-4o được phát hành theo **MIT License**.
+
+---
+
+## 👤 Tác giả
+- **[@smlnobita](https://t.me/smlnobita)** (Telegram)
+
+## 📞 Liên hệ
+Nếu có bất kỳ câu hỏi hoặc góp ý, hãy liên hệ qua **Telegram**: [@smlnobita](https://t.me/smlnobita).
+
+🔥 **Cảm ơn bạn đã sử dụng BéHoà-4o! Chúc bạn có trải nghiệm tuyệt vời!** 🎉
 

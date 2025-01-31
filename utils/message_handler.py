@@ -40,13 +40,13 @@ class MessageHandler:
 
         if count >= MessageLimits.INITIAL_LIMIT and stage == UserStage.INITIAL:
             markup.add(
-                InlineKeyboardButton("Tiếp tục nhắn", callback_data="continue"),
+                InlineKeyboardButton("💬 Tiếp tục nhắn", callback_data="continue"),
                 InlineKeyboardButton("🧹 Clear", callback_data="clear")
             )
             return markup
         elif count >= MessageLimits.EXTENDED_LIMIT and stage == UserStage.EXTENDED:
             markup.add(
-                InlineKeyboardButton("Nhập key", callback_data="request_key"),
+                InlineKeyboardButton("🔑 Nhập key", callback_data="request_key"),
                 InlineKeyboardButton("🧹 Clear", callback_data="clear")
             )
             return markup

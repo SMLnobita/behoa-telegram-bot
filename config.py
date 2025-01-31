@@ -12,8 +12,8 @@ class Config:
     VN_TIMEZONE = pytz.timezone('Asia/Ho_Chi_Minh')
 
 class MessageLimits:
-    INITIAL_LIMIT = 10
-    EXTENDED_LIMIT = 20
-    FINAL_LIMIT = 35
+    INITIAL_LIMIT = 5
+    EXTENDED_LIMIT = 10
+    FINAL_LIMIT = 15
     COOLDOWN = 3
     VALID_KEY = "Behoane"
