@@ -17,16 +17,29 @@ class UserManager:
         if not os.path.exists(Config.HISTORY_DIR):
             os.makedirs(Config.HISTORY_DIR)
 
-    def add_to_chat_history(self, user_id, role, content):
+    def get_user_state(self, user_id):
         """
-        Thêm tin nhắn vào lịch sử chat
+        Lấy hoặc tạo mới trạng thái người dùng
         
         Args:
             user_id: ID của người dùng
-            role: Vai trò của người gửi tin nhắn
-            content: Nội dung tin nhắn
+            
+        Returns:
+            UserState: Trạng thái của người dùng
         """
-        MessageHandler.add_to_chat_history(user_id, role, content)
+        if user_id not in self.users:
+            self.users[user_id] = UserState()
+        return self.users[user_id]
+
+    def clear_user_data(self, user_id):
+        """
+        Xóa toàn bộ dữ liệu của người dùng
+        
+        Args:
+            user_id: ID của người dùng
+        """
+        MessageHandler.clear_chat_history(user_id)
+        self.users[user_id] = UserState()
 
     def can_send_message(self, user_state):
         """
@@ -62,27 +75,15 @@ class UserManager:
             return False
         return True
 
-    def clear_user_data(self, user_id):
+    def update_message_count(self, user_state):
         """
-        Xóa toàn bộ dữ liệu của người dùng
+        Cập nhật số lượng tin nhắn và thời gian gửi tin nhắn cuối cùng
         
         Args:
-            user_id: ID của người dùng
+            user_state: Trạng thái của người dùng
         """
-        MessageHandler.clear_chat_history(user_id)
-        self.users[user_id] = UserState()
-
-    def get_chat_history(self, user_id):
-        """
-        Lấy lịch sử chat của người dùng
-        
-        Args:
-            user_id: ID của người dùng
-            
-        Returns:
-            list: Danh sách các tin nhắn trong lịch sử
-        """
-        return MessageHandler.get_chat_history(user_id)
+        user_state.message_count += 1
+        user_state.last_message_time = time.time()
 
     def get_remaining_messages(self, user_state):
         """
@@ -104,65 +105,6 @@ class UserManager:
         elif stage == UserStage.KEY_USED:
             return max(0, MessageLimits.FINAL_LIMIT - count)
         return 0
-
-    def get_stage_info(self, user_state):
-        """
-        Lấy thông tin về giai đoạn hiện tại của người dùng
-        
-        Args:
-            user_state: Trạng thái của người dùng
-            
-        Returns:
-            dict: Thông tin về giai đoạn hiện tại
-        """
-        stage = user_state.stage
-        count = user_state.message_count
-        
-        if stage == UserStage.INITIAL:
-            return {
-                "current_stage": "Giai đoạn 1",
-                "message_limit": MessageLimits.INITIAL_LIMIT,
-                "remaining": self.get_remaining_messages(user_state),
-                "can_upgrade": count >= MessageLimits.INITIAL_LIMIT
-            }
-        elif stage == UserStage.EXTENDED:
-            return {
-                "current_stage": "Giai đoạn 2",
-                "message_limit": MessageLimits.EXTENDED_LIMIT,
-                "remaining": self.get_remaining_messages(user_state),
-                "can_upgrade": count >= MessageLimits.EXTENDED_LIMIT
-            }
-        else:
-            return {
-                "current_stage": "Giai đoạn 3",
-                "message_limit": MessageLimits.FINAL_LIMIT,
-                "remaining": self.get_remaining_messages(user_state),
-                "can_upgrade": False
-            }
-
-    def get_user_state(self, user_id):
-        """
-        Lấy hoặc tạo mới trạng thái người dùng
-        
-        Args:
-            user_id: ID của người dùng
-            
-        Returns:
-            UserState: Trạng thái của người dùng
-        """
-        if user_id not in self.users:
-            self.users[user_id] = UserState()
-        return self.users[user_id]
-
-    def update_message_count(self, user_state):
-        """
-        Cập nhật số lượng tin nhắn và thời gian gửi tin nhắn cuối cùng
-        
-        Args:
-            user_state: Trạng thái của người dùng
-        """
-        user_state.message_count += 1
-        user_state.last_message_time = time.time()
 
     def upgrade_user_stage(self, user_state):
         """
@@ -198,3 +140,61 @@ class UserManager:
             user_state.waiting_for_key = False
             return True
         return False
+
+    def get_chat_history(self, user_id):
+        """
+        Lấy lịch sử chat của người dùng
+        
+        Args:
+            user_id: ID của người dùng
+            
+        Returns:
+            list: Danh sách các tin nhắn trong lịch sử
+        """
+        return MessageHandler.get_chat_history(user_id)
+
+    def add_to_chat_history(self, user_id, role, content):
+        """
+        Thêm tin nhắn vào lịch sử chat
+        
+        Args:
+            user_id: ID của người dùng
+            role: Vai trò của người gửi tin nhắn
+            content: Nội dung tin nhắn
+        """
+        MessageHandler.add_to_chat_history(user_id, role, content)
+
+    def get_stage_info(self, user_state):
+        """
+        Lấy thông tin về giai đoạn hiện tại của người dùng
+        
+        Args:
+            user_state: Trạng thái của người dùng
+            
+        Returns:
+            dict: Thông tin về giai đoạn hiện tại
+        """
+        stage = user_state.stage
+        count = user_state.message_count
+        
+        if stage == UserStage.INITIAL:
+            return {
+                "current_stage": "Giai đoạn 1",
+                "message_limit": MessageLimits.INITIAL_LIMIT,
+                "remaining": self.get_remaining_messages(user_state),
+                "can_upgrade": count >= MessageLimits.INITIAL_LIMIT
+            }
+        elif stage == UserStage.EXTENDED:
+            return {
+                "current_stage": "Giai đoạn 2",
+                "message_limit": MessageLimits.EXTENDED_LIMIT,
+                "remaining": self.get_remaining_messages(user_state),
+                "can_upgrade": count >= MessageLimits.EXTENDED_LIMIT
+            }
+        else:
+            return {
+                "current_stage": "Giai đoạn 3",
+                "message_limit": MessageLimits.FINAL_LIMIT,
+                "remaining": self.get_remaining_messages(user_state),
+                "can_upgrade": False
+            }

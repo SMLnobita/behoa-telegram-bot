@@ -21,7 +21,6 @@ class ChatHandler:
         self.gold_tracker = trackers['gold']
         self.currency_tracker = trackers['currency']
         self.crypto_tracker = trackers['crypto']
-        self.weather_tracker = trackers['weather']
         self.openai_handler = trackers['openai']
 
     def handle_message(self, message):
@@ -44,6 +43,34 @@ class ChatHandler:
             return
 
         self._process_chat_message(message, user_id, user_state)
+
+    def _handle_key_input(self, message, user_state):
+        """
+        Xử lý tin nhắn khi người dùng đang nhập key
+        
+        Returns:
+            bool: True nếu tiếp tục xử lý tin nhắn, False nếu dừng lại
+        """
+        if user_state.waiting_for_key:
+            if message.text == MessageLimits.VALID_KEY:
+                user_state.stage = UserStage.KEY_USED
+                user_state.waiting_for_key = False
+                remaining = MessageLimits.FINAL_LIMIT - user_state.message_count
+                self.bot.send_message(
+                    message.chat.id, 
+                    f"✅ Key hợp lệ! Bạn đã được cấp thêm {remaining} tin nhắn."
+                )
+            else:
+                # Hiển thị thông báo lỗi và menu với nút nhập key
+                user_state.waiting_for_key = False
+                menu = MessageHandler.create_menu_markup(user_state)
+                self.bot.send_message(
+                    message.chat.id,
+                    "❌ Key không hợp lệ!\n🔑 Vui lòng thử lại.\n🧹 Clear xoá history để chat tiếp",
+                    reply_markup=menu
+                )
+            return False
+        return True
 
     def _check_limits(self, message, user_id, user_state):
         """
@@ -77,34 +104,6 @@ class ChatHandler:
             )
             return False
 
-        return True
-
-    def _handle_key_input(self, message, user_state):
-        """
-        Xử lý tin nhắn khi người dùng đang nhập key
-        
-        Returns:
-            bool: True nếu tiếp tục xử lý tin nhắn, False nếu dừng lại
-        """
-        if user_state.waiting_for_key:
-            if message.text == MessageLimits.VALID_KEY:
-                user_state.stage = UserStage.KEY_USED
-                user_state.waiting_for_key = False
-                remaining = MessageLimits.FINAL_LIMIT - user_state.message_count
-                self.bot.send_message(
-                    message.chat.id, 
-                    f"✅ Key hợp lệ! Bạn đã được cấp thêm {remaining} tin nhắn."
-                )
-            else:
-                # Hiển thị thông báo lỗi và menu với nút nhập key
-                user_state.waiting_for_key = False
-                menu = MessageHandler.create_menu_markup(user_state)
-                self.bot.send_message(
-                    message.chat.id,
-                    "❌ Key không hợp lệ!\n🔑 Vui lòng thử lại.\n🧹 Clear xoá history để chat tiếp",
-                    reply_markup=menu
-                )
-            return False
         return True
 
     def _handle_keywords(self, message):
@@ -170,21 +169,6 @@ class ChatHandler:
             try:
                 crypto_data = self.crypto_tracker.fetch_crypto_prices()
                 formatted_message = self.crypto_tracker.format_crypto_prices(crypto_data)
-                self.bot.send_message(
-                    user_id,
-                    formatted_message,
-                    parse_mode="Markdown"
-                )
-                return True
-            except Exception as e:
-                self.bot.send_message(user_id, f"❌ {str(e)}")
-                return True
-
-        # Xử lý từ khóa về thời tiết
-        if any(keyword in text for keyword in keywords.thoitiet_keywords):
-            try:
-                weather_data = self.weather_tracker.fetch_weather_data()
-                formatted_message = self.weather_tracker.format_weather_data(weather_data)
                 self.bot.send_message(
                     user_id,
                     formatted_message,

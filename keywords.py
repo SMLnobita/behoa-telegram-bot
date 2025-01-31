@@ -4,21 +4,13 @@ gold_keywords = [
     "cho biet gia vang", "cho biết giá vàng", "cho biết giá vàng hôm nay", "cho biết giá vàng trong nước",
     "hãy cho biết giá vàng", "hãy cho biết giá vàng hôm nay", "hãy cho biết giá vàng trong nước",
     "hãy nói giá vàng", "hãy nói giá vàng hôm nay", "hãy nói giá vàng trong nước",
-    "gia vang ngay hom nay tai ha noi", "gia vang ngay hom nay tai sai gon",
-    "giavang", "giavanghomnay", "giavangtrongnuoc", "vang", "vanghomnay", 
-    "vangtrongnuoc", "vangtrongnuochomnay", "vangtrongnuocngayhomnay", 
-    "chobietgiavang", "chobietgiavanghomnay", "chobietgiavangtrongnuoc",
-    "haychobietgiavang", "haychobietgiavanghomnay", "haychobietgiavangtrongnuoc",
-    "haynoigiavang", "haynoigiavanghomnay", "haynoigiavangtrongnuoc",
-    "giavangngayhomnaytaihanoi", "giavangngayhomnaytaisaigon"
+    "gia vang ngay hom nay tai ha noi", "gia vang ngay hom nay tai sai gon"
 ]
 
 ngoaite_keywords = [
     "gia do", "gia do la", "gia do la hom nay", "giá đô", "giá đô la", "giá đô la hôm nay", "ngoai te", "ngoại tệ",
     "tỷ giá", "tỷ giá ngoại tệ", "tỷ giá ngoại tệ hôm nay", "tỷ giá ngoại tệ vietcombank", "ty gia ngoai te",
-    "ty gia ngoai te hom nay", "ty gia ngoai te vietcombank", "tỷ giá hôm nay", "giá ngoại tệ",
-    "giado", "giadola", "giadolahomnay", "ngoaite", "tygia", "tygianoaite",
-    "tygianoaitehomnay", "tygianoaitevietcombank", "tygiahomnay", "giangoaite"
+    "ty gia ngoai te hom nay", "ty gia ngoai te vietcombank", "tỷ giá hôm nay", "giá ngoại tệ"
 ]
 
 tienao_keywords = [
@@ -26,14 +18,7 @@ tienao_keywords = [
     "gia shiba", "gia sol", "gia tien ao", "gia tien ao hom nay", "gia usdt", "giá tiền ảo", "giá tiền ảo hôm nay",
     "thi truong tien ao", "thi truong tien ao hom nay", "thị trường tiền ảo", "thị trường tiền ảo hôm nay", "tien ao",
     "tien ao hom nay", "tiền ảo", "tiền ảo hôm nay", "giá btc", "giá eth", "giá usdt", "giá bnb", "gia ca tien ao",
-    "gia ca tien ao hom nay", "gia tien ao", "gia tien ao hom nay", "gia tien ao binance", "gia tien ao binance hom nay",
-    "baygio", "date", "homnaylangaygi", "homnaylangaymay", "homnaylangaymaythangmay",
-    "homnaylangaymaythangmaynammay", "homnaylathugi", "homnaylathumay", "homnayngaybaonhieu",
-    "homnayngaymay", "ngay", "ngayamlich", "ngayamlichhomnay", "ngayamlichlangaymay",
-    "ngayduonglich", "ngayduonglichhomnay", "ngayduonglichlangaymay", "ngaygio", 
-    "ngayhomnaylangaymay", "ngayhomnaylangaymaythangmay", "ngayhomnaylangaymaythangmaynammay", 
-    "ngayhomnaylathumay", "ngayhomnaythumay", "ngaythang", "ngaythanggio", 
-    "ngaythangnam", "ngaythangnamgio", "now", "thoigian", "time", "tien ao"
+    "gia ca tien ao hom nay", "gia tien ao", "gia tien ao hom nay", "gia tien ao binance", "gia tien ao binance hom nay"
 ]
 
 thoigian_keywords = [
@@ -55,11 +40,7 @@ name_keywords = [
     "tên bạn là gì", "ten ban la gi", "tên của bạn là gì", "ten cua ban la gi",
     "tên đầy đủ của bạn", "ten day du cua ban", "bạn tên đầy đủ là gì", "ban ten day du la gi",
     "bot có tên là gì", "bot co ten la gi", "bot có tên không", "bot co ten khong",
-    "bot gọi là gì", "bot goi la gi", "bot xưng tên là gì", "bot xung ten la gi",
-    "bantengi", "tentencuaban", "banlaai", "botengi", "tenbot",
-    "botlaai", "banlabotgi", "botgi", "tenbanlagi", "tencuabanlagi",
-    "tendayducuaban", "bantendaydulagi", "botcotennagi", "botcotenkhong",
-    "botgoilagi", "botxungtenlagi"
+    "bot gọi là gì", "bot goi la gi", "bot xưng tên là gì", "bot xung ten la gi"
 ]
 
 taohoa_keywords = [
@@ -77,33 +58,5 @@ taohoa_keywords = [
     "bạn do ai lập trình", "ban do ai lap trinh",
     "ai đã lập trình bạn", "ai da lap trinh ban",
     "ai thiết kế bạn", "ai thiet ke ban",
-    "ai sáng lập ra bạn", "ai sang lap ra ban", "ai tạo ra bạn", "ai tao ra ban", "bạn do ai lam ra", "ban do ai lam ra",
-    "ailanguoitaoraban", "ailanguoitaoraban", 
-    "banlachatbotdoaitaora", "banlachatbotdoaitaora", 
-    "banlachatbotdoaitaora", "banlachatbotdoaitaora",
-    "chucuabanlaai", "chucuabanlaai", 
-    "chucuabanlaaitaora", "chucuabanlaaitaora",
-    "nguoitaoraban", "nguoitaoraban", 
-    "nguoitaorabanlaai", "nguoitaorabanlaai",
-    "tacgiacuaban", "tacgiacuaban",
-    "banduoctaoraiboiai", "banduoctaoraiboiai",
-    "aidataoraban", "aidataoraban",
-    "aiphattrienban", "aiphattrienban",
-    "bandoailaptrinh", "bandoailaptrinh",
-    "aidalaptrinhban", "aidalaptrinhban",
-    "aithietkeban", "aithietkeban",
-    "aisanglapraban", "aisanglapraban", 
-    "aitaoraban", "aitaoraban", 
-    "bandoailamra", "bandoailamra"
-]
-
-# Add to keywords.py
-thoitiet_keywords = [
-    "thoi tiet", "thời tiết", "dự báo thời tiết", "du bao thoi tiet",
-    "nhiệt độ", "nhiet do", "độ ẩm", "do am", "khí hậu", "khi hau",
-    "nắng", "nang", "mưa", "mua", "thời tiết hôm nay", "thoi tiet hom nay",
-    "dự báo thời tiết hôm nay", "du bao thoi tiet hom nay",
-    "thoitiet", "dubaothoitiet", "nhietdo", "doam", "khihau",
-    "nang", "mua", "thoitiethomnay", "dubaothoitiethomnay",
-    "dubaothoitiet", "thoitiethomnay", "dubaothoitiethomnay"
+    "ai sáng lập ra bạn", "ai sang lap ra ban", "ai tạo ra bạn", "ai tao ra ban", "bạn do ai lam ra", "ban do ai lam ra"
 ]

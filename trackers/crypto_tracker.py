@@ -29,11 +29,11 @@ class CryptoPriceTracker:
                 data = response.json()
                 price = float(data["price"])
                 
-                # Format giá hiển thị đẹp hơn
+                # Format price based on value
                 if price < 1:
                     formatted_price = f"${price:.4f} USD"
                 elif price < 100:
-                    formatted_price = f"${price:,.2f} USD"
+                    formatted_price = f"${price:.2f} USD"
                 else:
                     formatted_price = f"${price:,.0f} USD"
                 
@@ -47,19 +47,18 @@ class CryptoPriceTracker:
             raise Exception(f"🚨 Lỗi khi lấy giá tiền ảo: {str(e)}")
 
     def format_crypto_prices(self, prices: Dict) -> str:
-        message = "🚀 *CẬP NHẬT GIÁ TIỀN ẢO TRÊN BINANCE* 🚀\n\n"
+        message = "🚀 **Cập nhật giá tiền ảo trên Binance**\n\n"
         
         icons = {
-            "BTC": "₿", "ETH": "Ξ", "BNB": "🅱️",
-            "XRP": "✕", "TRX": "⚛️", "SOL": "🔆", "DOGE": "Ð"
+            "BTC": "🟠", "ETH": "🟣", "BNB": "🟡",
+            "XRP": "🔵", "TRX": "🔴", "SOL": "🟢", "DOGE": "🟤"
         }
         
         for symbol, data in prices.items():
             icon = icons.get(symbol, "💰")
-            message += f"{icon} *{symbol} - {data['name']}*\n"
-            message += f"   💵 _Giá:_ `{data['price']}`\n"
-            message += "──────────────\n"
-
+            message += f"{icon} **{symbol} - {data['name']}**\n"
+            message += f"💵 Giá: `{data['price']}`\n\n"
+        
         current_time = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
-        message += f"🕒 *Cập nhật:* `{current_time.strftime('%d/%m/%Y %H:%M:%S')}` 🇻🇳"
+        message += f"🕒 **Cập nhật:** `{current_time.strftime('%d/%m/%Y %H:%M:%S')}` 🇻🇳"
         return message

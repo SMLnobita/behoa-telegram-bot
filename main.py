@@ -11,7 +11,6 @@ from trackers.currency_tracker import CurrencyExchangeTracker
 from trackers.gold_tracker import GoldPriceTracker
 from trackers.crypto_tracker import CryptoPriceTracker
 from utils.message_handler import MessageHandler
-from trackers.weather_tracker import WeatherTracker
 
 class TelegramBot:
     def __init__(self):
@@ -27,14 +26,12 @@ class TelegramBot:
         self.gold_tracker = GoldPriceTracker()
         self.currency_tracker = CurrencyExchangeTracker()
         self.crypto_tracker = CryptoPriceTracker()
-        self.weather_tracker = WeatherTracker()
 
         # Create trackers dictionary for dependency injection
         trackers = {
             'gold': self.gold_tracker,
             'currency': self.currency_tracker,
             'crypto': self.crypto_tracker,
-            'weather': self.weather_tracker,
             'openai': self.openai_handler
         }
 
@@ -50,28 +47,26 @@ class TelegramBot:
         self._register_handlers()
 
     def _setup_commands(self):
-        """Set up the list of commands for the bot"""
+        """Thiết lập danh sách lệnh cho bot"""
         self.bot.set_my_commands([
-            telebot.types.BotCommand("start", "Bắt đầu trò chuyện với bot"),
-            telebot.types.BotCommand("help", "Xem danh sách các lệnh"),
-            telebot.types.BotCommand("clear", "Xóa tin nhắn của bot"),
+            telebot.types.BotCommand("start", "Khởi động bot"),
+            telebot.types.BotCommand("help", "Xem hướng dẫn sử dụng"),
+            telebot.types.BotCommand("clear", "Xóa lịch sử chat"),
+            telebot.types.BotCommand("time", "Xem thời gian hiện tại"),
             telebot.types.BotCommand("info", "Xem thông tin của bạn"),
-            telebot.types.BotCommand("thoitiet", "Xem thời tiết hiện tại"),
             telebot.types.BotCommand("image", "Tạo hình ảnh từ mô tả"),
-            telebot.types.BotCommand("time", "Xem giờ hiện tại"),
-            telebot.types.BotCommand("vang", "Xem giá vàng (SJC và PNJ)"),
+            telebot.types.BotCommand("vang", "Xem giá vàng SJC và PNJ"),
             telebot.types.BotCommand("ngoaite", "Xem tỷ giá ngoại tệ"),
-            telebot.types.BotCommand("tienao", "Xem giá tiền điện tử"),
+            telebot.types.BotCommand("tienao", "Xem giá tiền ảo")
         ])
 
     def _register_handlers(self):
-        """Register all handlers for the bot"""
+        """Đăng ký tất cả các handlers cho bot"""
         # Command handlers
         self.bot.message_handler(commands=['start'])(self.message_commands.start_message)
         self.bot.message_handler(commands=['help'])(self.message_commands.help_message)
         self.bot.message_handler(commands=['clear'])(self.message_commands.clear_message)
         self.bot.message_handler(commands=['info'])(self.message_commands.info_message)
-        self.bot.message_handler(commands=['thoitiet'])(self.message_commands.weather_message)
         self.bot.message_handler(commands=['image'])(self.message_commands.image_message)
         self.bot.message_handler(commands=['time'])(self.message_commands.time_message)
         self.bot.message_handler(commands=['vang'])(self.message_commands.gold_price_message)
@@ -89,29 +84,29 @@ class TelegramBot:
         )
 
     def run(self):
-        """Run the bot"""
-        print("🚀 Chatbot GPT-4o on Telegram is running...")
-        print(f"⏰ Started at: {MessageHandler.format_time_message()}")
+        """Khởi chạy bot"""
+        print("🚀 Chatbot GPT-4o trên Telegram đang chạy...")
+        print(f"⏰ Khởi động lúc: {MessageHandler.format_time_message()}")
         try:
             self.bot.polling(none_stop=True)
         except Exception as e:
-            print(f"❌ Error running bot: {str(e)}")
-            # Add retry logic or error handling here if needed
+            print(f"❌ Lỗi khi chạy bot: {str(e)}")
+            # Có thể thêm logic retry hoặc xử lý lỗi ở đây
 
 def main():
-    """Entry point of the application"""
+    """Entry point của ứng dụng"""
     try:
         # Ensure config is valid
         if not Config.TELEGRAM_BOT_TOKEN:
-            raise ValueError("Telegram Bot Token cannot be empty")
+            raise ValueError("Telegram Bot Token không được để trống")
         if not Config.OPENAI_API_KEY:
-            raise ValueError("OpenAI API Key cannot be empty")
+            raise ValueError("OpenAI API Key không được để trống")
 
         # Create and run the bot
         bot = TelegramBot()
         bot.run()
     except Exception as e:
-        print(f"❌ Error initializing bot: {str(e)}")
+        print(f"❌ Lỗi khởi tạo bot: {str(e)}")
         exit(1)
 
 if __name__ == "__main__":

@@ -68,7 +68,7 @@ class GoldPriceTracker:
             raise Exception(f"⚠️ Lỗi khi lấy giá vàng: {str(e)}")
 
     def format_gold_prices(self, gold_data: List[Dict]) -> str:
-        message = "🏆 *CẬP NHẬT GIÁ VÀNG HÔM NAY* 🏆\n\n"
+        message = "🏆 **Cập nhật giá vàng hôm nay** 🏆\n\n"
 
         region_icons = {
             "TPHCM": "🌆", "Hà Nội": "🏙", "Miền Tây": "🌿", "Đông Nam Bộ": "🌅"
@@ -80,17 +80,16 @@ class GoldPriceTracker:
         for khu_vuc in self.KHU_VUC_ORDER:
             region_data = [d for d in gold_data if d["khu_vuc"] == khu_vuc]
             if region_data:
-                message += f"{region_icons.get(khu_vuc, '📍')} *{khu_vuc}*\n"
+                message += f"{region_icons.get(khu_vuc, '📍')} **{khu_vuc}**\n"
                 for data in region_data:
                     message += (
-                        f"  {gold_icons.get(data['loai_vang'], '🪙')} *{data['loai_vang']}*\n"
-                        f"    🔹 _Mua:_ `{data['gia_mua']} VNĐ`\n"
-                        f"    🔹 _Bán:_ `{data['gia_ban']} VNĐ`\n"
+                        f"{gold_icons.get(data['loai_vang'], '🪙')} **{data['loai_vang']}**\n"
+                        f"   🔹 Mua: `{data['gia_mua']} VNĐ`\n"
+                        f"   🔹 Bán: `{data['gia_ban']} VNĐ`\n"
                     )
-                message += "──────────────\n"
+                message += "\n"
 
         if gold_data:
-            message += f"⏳ *Cập nhật:* `{gold_data[0]['cap_nhat']}`"
+            message += f"⏳ **Cập nhật:** `{gold_data[0]['cap_nhat']}`"
 
         return message
-
