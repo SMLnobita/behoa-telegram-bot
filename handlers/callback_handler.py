@@ -65,13 +65,6 @@ class CallbackHandler:
                 text="Có lỗi xảy ra, vui lòng thử lại sau."
             )
 
-    def _handle_start_callback(self, user_id):
-        """Xử lý callback khi nhấn nút 'Bắt đầu'"""
-        self.bot.send_message(
-            user_id,
-            "💬 Hãy bắt đầu chat!"
-        )
-
     def _handle_clear_callback(self, user_id):
         """Xử lý callback khi nhấn nút 'Xóa lịch sử'"""
         self.user_manager.clear_user_data(user_id)
@@ -122,3 +115,10 @@ class CallbackHandler:
                 user_id,
                 "⚠️ Không thể thực hiện thao tác này ở giai đoạn hiện tại."
             )
+
+    def _handle_start_callback(self, user_id):
+        """Xử lý callback khi nhấn nút 'Bắt đầu'"""
+        self.bot.send_message(
+            user_id,
+            "💬 Hãy bắt đầu chat!"
+        )

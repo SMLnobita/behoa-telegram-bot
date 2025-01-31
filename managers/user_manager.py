@@ -17,29 +17,16 @@ class UserManager:
         if not os.path.exists(Config.HISTORY_DIR):
             os.makedirs(Config.HISTORY_DIR)
 
-    def get_user_state(self, user_id):
+    def add_to_chat_history(self, user_id, role, content):
         """
-        Lấy hoặc tạo mới trạng thái người dùng
+        Thêm tin nhắn vào lịch sử chat
         
         Args:
             user_id: ID của người dùng
-            
-        Returns:
-            UserState: Trạng thái của người dùng
+            role: Vai trò của người gửi tin nhắn
+            content: Nội dung tin nhắn
         """
-        if user_id not in self.users:
-            self.users[user_id] = UserState()
-        return self.users[user_id]
-
-    def clear_user_data(self, user_id):
-        """
-        Xóa toàn bộ dữ liệu của người dùng
-        
-        Args:
-            user_id: ID của người dùng
-        """
-        MessageHandler.clear_chat_history(user_id)
-        self.users[user_id] = UserState()
+        MessageHandler.add_to_chat_history(user_id, role, content)
 
     def can_send_message(self, user_state):
         """
@@ -75,15 +62,27 @@ class UserManager:
             return False
         return True
 
-    def update_message_count(self, user_state):
+    def clear_user_data(self, user_id):
         """
-        Cập nhật số lượng tin nhắn và thời gian gửi tin nhắn cuối cùng
+        Xóa toàn bộ dữ liệu của người dùng
         
         Args:
-            user_state: Trạng thái của người dùng
+            user_id: ID của người dùng
         """
-        user_state.message_count += 1
-        user_state.last_message_time = time.time()
+        MessageHandler.clear_chat_history(user_id)
+        self.users[user_id] = UserState()
+
+    def get_chat_history(self, user_id):
+        """
+        Lấy lịch sử chat của người dùng
+        
+        Args:
+            user_id: ID của người dùng
+            
+        Returns:
+            list: Danh sách các tin nhắn trong lịch sử
+        """
+        return MessageHandler.get_chat_history(user_id)
 
     def get_remaining_messages(self, user_state):
         """
@@ -105,64 +104,6 @@ class UserManager:
         elif stage == UserStage.KEY_USED:
             return max(0, MessageLimits.FINAL_LIMIT - count)
         return 0
-
-    def upgrade_user_stage(self, user_state):
-        """
-        Nâng cấp giai đoạn của người dùng
-        
-        Args:
-            user_state: Trạng thái của người dùng
-            
-        Returns:
-            bool: True nếu nâng cấp thành công, False nếu không thể nâng cấp
-        """
-        if user_state.stage == UserStage.INITIAL:
-            user_state.stage = UserStage.EXTENDED
-            return True
-        elif user_state.stage == UserStage.EXTENDED and not user_state.waiting_for_key:
-            user_state.waiting_for_key = True
-            return True
-        return False
-
-    def verify_key(self, user_state, key):
-        """
-        Xác thực key và cập nhật trạng thái nếu hợp lệ
-        
-        Args:
-            user_state: Trạng thái của người dùng
-            key: Key được nhập
-            
-        Returns:
-            bool: True nếu key hợp lệ, False nếu không hợp lệ
-        """
-        if user_state.stage == UserStage.EXTENDED and key == MessageLimits.VALID_KEY:
-            user_state.stage = UserStage.KEY_USED
-            user_state.waiting_for_key = False
-            return True
-        return False
-
-    def get_chat_history(self, user_id):
-        """
-        Lấy lịch sử chat của người dùng
-        
-        Args:
-            user_id: ID của người dùng
-            
-        Returns:
-            list: Danh sách các tin nhắn trong lịch sử
-        """
-        return MessageHandler.get_chat_history(user_id)
-
-    def add_to_chat_history(self, user_id, role, content):
-        """
-        Thêm tin nhắn vào lịch sử chat
-        
-        Args:
-            user_id: ID của người dùng
-            role: Vai trò của người gửi tin nhắn
-            content: Nội dung tin nhắn
-        """
-        MessageHandler.add_to_chat_history(user_id, role, content)
 
     def get_stage_info(self, user_state):
         """
@@ -198,3 +139,62 @@ class UserManager:
                 "remaining": self.get_remaining_messages(user_state),
                 "can_upgrade": False
             }
+
+    def get_user_state(self, user_id):
+        """
+        Lấy hoặc tạo mới trạng thái người dùng
+        
+        Args:
+            user_id: ID của người dùng
+            
+        Returns:
+            UserState: Trạng thái của người dùng
+        """
+        if user_id not in self.users:
+            self.users[user_id] = UserState()
+        return self.users[user_id]
+
+    def update_message_count(self, user_state):
+        """
+        Cập nhật số lượng tin nhắn và thời gian gửi tin nhắn cuối cùng
+        
+        Args:
+            user_state: Trạng thái của người dùng
+        """
+        user_state.message_count += 1
+        user_state.last_message_time = time.time()
+
+    def upgrade_user_stage(self, user_state):
+        """
+        Nâng cấp giai đoạn của người dùng
+        
+        Args:
+            user_state: Trạng thái của người dùng
+            
+        Returns:
+            bool: True nếu nâng cấp thành công, False nếu không thể nâng cấp
+        """
+        if user_state.stage == UserStage.INITIAL:
+            user_state.stage = UserStage.EXTENDED
+            return True
+        elif user_state.stage == UserStage.EXTENDED and not user_state.waiting_for_key:
+            user_state.waiting_for_key = True
+            return True
+        return False
+
+    def verify_key(self, user_state, key):
+        """
+        Xác thực key và cập nhật trạng thái nếu hợp lệ
+        
+        Args:
+            user_state: Trạng thái của người dùng
+            key: Key được nhập
+            
+        Returns:
+            bool: True nếu key hợp lệ, False nếu không hợp lệ
+        """
+        if user_state.stage == UserStage.EXTENDED and key == MessageLimits.VALID_KEY:
+            user_state.stage = UserStage.KEY_USED
+            user_state.waiting_for_key = False
+            return True
+        return False

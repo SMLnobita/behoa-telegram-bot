@@ -38,14 +38,16 @@ class CurrencyExchangeTracker:
             raise Exception(f"⚠️ Lỗi khi lấy tỷ giá: {str(e)}")
 
     def format_exchange_rates(self, rates: Dict) -> str:
-        message = "💹 **Tỷ giá ngoại tệ Vietcombank hôm nay**\n\n"
+        message = "💹 *TỶ GIÁ NGOẠI TỆ VIETCOMBANK HÔM NAY* 💹\n\n"
 
         for currency, data in rates.items():
-            message += f"🌍 **{currency} - {data['Quốc gia']}**\n"
-            message += f"💵 Mua tiền mặt: `{data['Mua tiền mặt']}`\n"
-            message += f"🏦 Mua chuyển khoản: `{data['Mua chuyển khoản']}`\n"
-            message += f"💰 Bán ra: `{data['Giá bán']}`\n\n"
+            message += f"🌍 *{currency} - {data['Quốc gia']}*\n"
+            message += f"   💵 _Mua tiền mặt:_ `{data['Mua tiền mặt']}`\n"
+            message += f"   🏦 _Mua chuyển khoản:_ `{data['Mua chuyển khoản']}`\n"
+            message += f"   💰 _Bán ra:_ `{data['Giá bán']}`\n"
+            message += "──────────────\n"
 
         current_time = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
-        message += f"🕒 **Cập nhật:** `{current_time.strftime('%d/%m/%Y %H:%M:%S')}` 🇻🇳"
+        message += f"🕒 *Cập nhật:* `{current_time.strftime('%d/%m/%Y %H:%M:%S')}` 🇻🇳"
+
         return message
