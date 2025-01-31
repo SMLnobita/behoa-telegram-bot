@@ -9,11 +9,11 @@ class OpenAIHandler:
     def process_message(self, messages, time_info):
         try:
             # Thêm thông tin thời gian vào system message
-            system_message = f"Bạn là một chatbot AI sử dụng GPT-4o. {time_info}"
+            system_message = f"Bạn là một chatbot AI thông minh và thân thiện. {time_info}"
             messages[0]["content"] = system_message
             
             response = self.client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-4o-mini",
                 messages=messages
             )
             return response.choices[0].message.content
