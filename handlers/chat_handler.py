@@ -21,6 +21,7 @@ class ChatHandler:
         self.gold_tracker = trackers['gold']
         self.currency_tracker = trackers['currency']
         self.crypto_tracker = trackers['crypto']
+        self.weather_tracker = trackers['weather']
         self.openai_handler = trackers['openai']
 
     def handle_message(self, message):
@@ -39,7 +40,7 @@ class ChatHandler:
         if not self._check_limits(message, user_id, user_state):
             return
 
-        if self._handle_keywords(message):
+        if self._handle_keywords(message, user_id):
             return
 
         self._process_chat_message(message, user_id, user_state)
@@ -106,7 +107,7 @@ class ChatHandler:
 
         return True
 
-    def _handle_keywords(self, message):
+    def _handle_keywords(self, message, user_id):
         """
         Xử lý các từ khóa trong tin nhắn
         
@@ -114,17 +115,32 @@ class ChatHandler:
             bool: True nếu đã xử lý từ khóa, False nếu không có từ khóa
         """
         text = message.text.lower()
-        user_id = message.chat.id
+        #user_id = message.chat.id
 
         # Xử lý từ khóa về giá vàng
         if any(keyword in text for keyword in keywords.gold_keywords):
             try:
+                # Gửi tin nhắn đang xử lý
+                processing_msg = self.bot.reply_to(
+                    message,
+                    "💰 **Đang lấy dữ liệu giá vàng...**\n" +
+                    "⏳ Vui lòng đợi trong giây lát!",
+                    parse_mode="Markdown"
+                )
+                # Lấy dữ liệu và định dạng giá vàng
                 gold_data = self.gold_tracker.fetch_gold_prices()
                 formatted_message = self.gold_tracker.format_gold_prices(gold_data)
+                # Xoá tin nhắn đang xử lý
+                self.bot.delete_message(
+                    chat_id=user_id,
+                    message_id=processing_msg.message_id
+                )
+                # Gửi dữ liệu giá vàng
                 self.bot.send_message(
                     user_id,
                     formatted_message,
-                    parse_mode="Markdown"
+                    parse_mode="Markdown",
+                    reply_to_message_id=message.message_id
                 )
                 return True
             except Exception as e:
@@ -136,19 +152,35 @@ class ChatHandler:
             self.bot.send_message(
                 user_id,
                 "🤖 **Mình là BéHoà-4o, một chatbot AI sử dụng GPT-4o!**",
-                parse_mode="Markdown"
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
             )
             return True
 
         # Xử lý từ khóa về ngoại tệ
         if any(keyword in text for keyword in keywords.ngoaite_keywords):
             try:
+                # Gửi tin nhắn đang xử lý
+                processing_msg = self.bot.reply_to(
+                    message,
+                    "💱 **Đang lấy dữ liệu tỷ giá ngoại tệ...**\n" +
+                    "⏳ Vui lòng đợi trong giây lát!",
+                    parse_mode="Markdown"
+                )
+                # Lấy dữ liệu và định dạng tỷ giá ngoại tệ
                 rates = self.currency_tracker.fetch_exchange_rates()
                 formatted_message = self.currency_tracker.format_exchange_rates(rates)
+                # Xoá tin nhắn đang xử lý
+                self.bot.delete_message(
+                    chat_id=user_id,
+                    message_id=processing_msg.message_id
+                )
+                # Gửi dữ liệu tỷ giá ngoại tệ
                 self.bot.send_message(
                     user_id,
                     formatted_message,
-                    parse_mode="Markdown"
+                    parse_mode="Markdown",
+                    reply_to_message_id=message.message_id
                 )
                 return True
             except Exception as e:
@@ -160,36 +192,84 @@ class ChatHandler:
             self.bot.send_message(
                 user_id,
                 MessageHandler.format_time_message(),
-                parse_mode="Markdown"
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
             )
             return True
 
         # Xử lý từ khóa về tiền ảo
         if any(keyword in text for keyword in keywords.tienao_keywords):
             try:
+                #Gửi tin nhắn đang xử lý
+                processing_msg = self.bot.reply_to(
+                    message,
+                    "💰 **Đang lấy dữ liệu giá tiền ảo...**\n" +
+                    "⏳ Vui lòng đợi trong giây lát!",
+                    parse_mode="Markdown"
+                )
+                # Lấy dữ liệu và định dạng giá tiền ảo
                 crypto_data = self.crypto_tracker.fetch_crypto_prices()
                 formatted_message = self.crypto_tracker.format_crypto_prices(crypto_data)
+                # Xoá tin nhắn đang xử lý
+                self.bot.delete_message(
+                    chat_id=user_id,
+                    message_id=processing_msg.message_id
+                )
+                # Gửi dữ liệu giá tiền ảo
                 self.bot.send_message(
                     user_id,
                     formatted_message,
-                    parse_mode="Markdown"
+                    parse_mode="Markdown",
+                    reply_to_message_id=message.message_id
                 )
                 return True
             except Exception as e:
                 self.bot.send_message(user_id, f"❌ {str(e)}")
                 return True
-
+            
+        # Xử lý từ khoá về thời tiết
+        if any(keyword in text for keyword in keywords.thoitiet_keywords):
+            try:
+                #Gửi tin nhắn đang xử lý
+                processing_msg = self.bot.reply_to(
+                    message,
+                    "🌡️ **Đang lấy dữ liệu thời tiết...**\n" +
+                    "⏳ Vui lòng đợi trong giây lát!",
+                    parse_mode="Markdown"
+                )
+                #Lấy và định dạng dữ liệu thời tiết
+                weather_data = self.weather_tracker.fetch_weather_data()
+                formatted_message = self.weather_tracker.format_weather_data(weather_data)
+                #Xoá tin nhắn đang xử lý
+                self.bot.delete_message(
+                    chat_id=user_id,
+                    message_id=processing_msg.message_id
+                )
+                #Gửi dữ liệu thời tiết
+                self.bot.send_message(
+                    user_id,
+                    formatted_message,
+                    parse_mode="Markdown",
+                    reply_to_message_id=message.message_id
+                )
+                return True
+            except Exception as e:
+                self.bot.send_message(user_id, f"❌ {str(e)}")
+                return True
+            
         # Xử lý từ khóa về người tạo bot
         if any(keyword in text for keyword in keywords.taohoa_keywords):
             self.bot.send_message(
                 user_id,
                 "🤖 **Mình là BéHoà-4o, một chatbot AI sử dụng GPT-4o!**\n"
                 "🤖 **Mình được tạo ra bởi @smlnobita!**",
-                parse_mode="Markdown"
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
             )
             return True
 
         return False
+    
 
     def _process_chat_message(self, message, user_id, user_state):
         """Xử lý tin nhắn chat thông thường với OpenAI"""

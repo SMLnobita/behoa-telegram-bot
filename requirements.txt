@@ -1,9 +1,23 @@
-pyTelegramBotAPI>=4.10.0
-openai>=1.0.0
+# Bot Framework
+pyTelegramBotAPI>=4.15.0
+
+# Environment and Config
 python-dotenv>=1.0.0
 pytz>=2024.1
+
+# API Integrations
+openai>=1.12.0
 requests>=2.31.0
+
+# Data Processing
 beautifulsoup4>=4.12.0
-lxml>=5.1.0
-typing-extensions>=4.8.0
 lunarcalendar>=0.0.9
+
+# Code Quality and Type Hints
+typing>=3.7.4
+
+# XML Processing
+lxml>=5.1.0
+
+# DateTime Handling
+python-dateutil>=2.8.2

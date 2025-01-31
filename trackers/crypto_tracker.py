@@ -47,18 +47,25 @@ class CryptoPriceTracker:
             raise Exception(f"🚨 Lỗi khi lấy giá tiền ảo: {str(e)}")
 
     def format_crypto_prices(self, prices: Dict) -> str:
-        message = "🚀 **Cập nhật giá tiền ảo trên Binance**\n\n"
+        message = "🚀 **Cập nhật giá tiền điện tử trên Binance**\n\n"
         
         icons = {
-            "BTC": "🟠", "ETH": "🟣", "BNB": "🟡",
-            "XRP": "🔵", "TRX": "🔴", "SOL": "🟢", "DOGE": "🟤"
+            "BTC": "💰",  # Bitcoin - Vàng kỹ thuật số
+            "ETH": "⚙️",  # Ethereum - Công nghệ smart contract
+            "BNB": "🏦",  # BNB - Biểu tượng tài chính và quyền lực
+            "XRP": "💦",  # XRP - Thanh khoản và tốc độ
+            "TRX": "🎢",  # TRX - Tốc độ giao dịch nhanh, biểu tượng chuyển động
+            "SOL": "🌱",  # SOL - Tăng trưởng mạnh mẽ
+            "DOGE": "🚀"   # DOGE - Meme coin bay tới mặt trăng!
         }
         
         for symbol, data in prices.items():
-            icon = icons.get(symbol, "💰")
+            icon = icons.get(symbol, "💎📊")  # Icon mặc định nếu không có trong danh sách
             message += f"{icon} **{symbol} - {data['name']}**\n"
-            message += f"💵 Giá: `{data['price']}`\n\n"
+            message += f"💲💹 Giá: `{data['price']}`\n\n"
         
         current_time = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
-        message += f"🕒 **Cập nhật:** `{current_time.strftime('%d/%m/%Y %H:%M:%S')}` 🇻🇳"
+        message += f"⏳ **Cập nhật:** `{current_time.strftime('%d/%m/%Y %H:%M:%S')}` 🇻🇳"
         return message
+
+

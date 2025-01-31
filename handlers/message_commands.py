@@ -20,6 +20,7 @@ class MessageCommands:
         self.gold_tracker = trackers['gold']
         self.currency_tracker = trackers['currency']
         self.crypto_tracker = trackers['crypto']
+        self.weather_tracker = trackers['weather']
         self.openai_handler = trackers['openai']
 
     def start_message(self, message):
@@ -42,6 +43,7 @@ class MessageCommands:
             "• `/ngoaite` - Xem tỷ giá ngoại tệ\n"
             "• `/tienao` - Xem giá tiền ảo\n"
             "• `/image <mô tả>` để tạo hình ảnh\n"
+            "• `/thoitiet` - Xem thời tiết và chất lượng không khí\n"
             "• `/info` - Xem thông tin của bạn\n" 
             "liên hệ: @smlnobita (Telegram)\n\n"
             "🚀 **Hãy bắt đầu trò chuyện ngay!**"
@@ -68,6 +70,7 @@ class MessageCommands:
             "**💹 Tra cứu giá:**\n"
             "• `/vang` - Xem giá vàng SJC và PNJ\n"
             "• `/ngoaite` - Xem tỷ giá ngoại tệ Vietcombank\n"
+            "• `/thoitiet` - Xem thời tiết và chất lượng không khí\n"
             "• `/tienao` - Xem giá tiền ảo trên Binance\n\n"
             "**🎨 Tạo hình ảnh:**\n"
             "• Sử dụng `/image <mô tả>` để tạo hình ảnh\n"
@@ -113,7 +116,8 @@ class MessageCommands:
             self.bot.send_message(
                 message.chat.id,
                 info,
-                parse_mode="Markdown"
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
             )
         except Exception as e:
             error_message = (
@@ -125,7 +129,8 @@ class MessageCommands:
             self.bot.send_message(
                 message.chat.id,
                 error_message,
-                parse_mode="Markdown"
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
             )
 
     def time_message(self, message):
@@ -133,7 +138,8 @@ class MessageCommands:
         self.bot.send_message(
             message.chat.id,
             MessageHandler.format_time_message(),
-            parse_mode="Markdown"
+            parse_mode="Markdown",
+            reply_to_message_id=message.message_id
         )
 
     def image_message(self, message):
@@ -223,53 +229,143 @@ class MessageCommands:
     def gold_price_message(self, message):
         """Xử lý lệnh /vang"""
         try:
+            # Gửi tin nhắn đang xử lý
+            processing_msg = self.bot.reply_to(
+                message,
+                "🪙 **Cập nhật giá vàng SJC và PNJ...**\n" +
+                "⏳ Vui lòng đợi trong giây lát!",
+                parse_mode="Markdown"
+            )
+            ## Lấy và định dạng dữ liệu giá vàng
             gold_data = self.gold_tracker.fetch_gold_prices()
             formatted_message = self.gold_tracker.format_gold_prices(gold_data)
+            # Xóa tin nhắn đang xử lý
+            self.bot.delete_message(
+                chat_id=message.chat.id,
+                message_id=processing_msg.message_id
+            )
+            # Gửi dữ liệu giá vàng
             self.bot.send_message(
                 message.chat.id,
                 formatted_message,
-                parse_mode="Markdown"
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
             )
         except Exception as e:
             error_message = f"❌ {str(e)}"
             self.bot.send_message(
                 message.chat.id,
                 error_message,
-                parse_mode="Markdown"
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
             )
 
     def exchange_rate_message(self, message):
         """Xử lý lệnh /ngoaite"""
         try:
+            # Gửi tin nhắn đang xử lý
+            processing_msg = self.bot.reply_to(
+                message,
+                "💵 **Cập nhật giá ngoại tệ ...**\n" +
+                "⏳ Vui lòng đợi trong giây lát!",
+                parse_mode="Markdown"
+            )
+            ## Lấy và định dạng tỷ giá ngoại tệ
             rates = self.currency_tracker.fetch_exchange_rates()
             formatted_message = self.currency_tracker.format_exchange_rates(rates)
+            # Xóa tin nhắn đang xử lý
+            self.bot.delete_message(
+                chat_id=message.chat.id,
+                message_id=processing_msg.message_id
+            )
+            # Gửi dữ liệu tỷ giá ngoại tệ
             self.bot.send_message(
                 message.chat.id,
                 formatted_message,
-                parse_mode="Markdown"
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
             )
         except Exception as e:
             error_message = f"❌ {str(e)}"
             self.bot.send_message(
                 message.chat.id,
                 error_message,
-                parse_mode="Markdown"
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
             )
 
     def crypto_price_message(self, message):
         """Xử lý lệnh /tienao"""
         try:
+            # Gửi tin nhắn đang xử lý
+            processing_msg = self.bot.reply_to(
+                message,
+                "📈 **Cập nhật giá tiền điện tử trên Binance...**\n" +
+                "⏳ Vui lòng đợi trong giây lát!",
+                parse_mode="Markdown"
+            )
+            ## Lấy và định dạng dữ liệu thời tiết
             crypto_data = self.crypto_tracker.fetch_crypto_prices()
             formatted_message = self.crypto_tracker.format_crypto_prices(crypto_data)
+
+            # Xóa tin nhắn đang xử lý
+            self.bot.delete_message(
+                chat_id=message.chat.id,
+                message_id=processing_msg.message_id
+            )
+
+            # Gửi dữ liệu giá tiền ảo
             self.bot.send_message(
                 message.chat.id,
                 formatted_message,
-                parse_mode="Markdown"
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
             )
+
         except Exception as e:
             error_message = f"❌ {str(e)}"
             self.bot.send_message(
                 message.chat.id,
                 error_message,
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
+            )
+
+    
+    def weather_message(self, message):
+        """Xử lý lệnh /thoitiet"""
+        try:
+            # Gửi tin nhắn đang xử lý
+            processing_msg = self.bot.reply_to(
+                message,
+                "🌡️ **Đang lấy dữ liệu thời tiết...**\n" +
+                "⏳ Vui lòng đợi trong giây lát!",
                 parse_mode="Markdown"
+            )
+
+            # Lấy và định dạng dữ liệu thời tiết
+            weather_data = self.weather_tracker.fetch_weather_data()
+            formatted_message = self.weather_tracker.format_weather_data(weather_data)
+
+            # Xóa tin nhắn đang xử lý
+            self.bot.delete_message(
+                chat_id=message.chat.id,
+                message_id=processing_msg.message_id
+            )
+
+            # Gửi dữ liệu thời tiết
+            self.bot.send_message(
+                message.chat.id,
+                formatted_message,
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
+            )
+
+        except Exception as e:
+            error_message = f"❌ Lỗi: {str(e)}"
+            self.bot.send_message(
+                message.chat.id,
+                error_message,
+                parse_mode="Markdown",
+                reply_to_message_id=message.message_id
             )

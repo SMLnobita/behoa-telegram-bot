@@ -1,127 +1,189 @@
 # trackers/weather_tracker.py
 import requests
-from bs4 import BeautifulSoup
 from datetime import datetime
-import logging
-from typing import Dict, Optional
-from functools import lru_cache
-from concurrent.futures import ThreadPoolExecutor
-import re
+import pytz
+from typing import Dict
+from config import Config
 
-weather_icons = {
-    'sunny': '☀️',
-    'cloudy': '☁️',
-    'rain': '🌧️',
-    'storm': '⛈️',
-    'snow': '❄️',
-    'fog': '🌫️',
-    'wind': '💨',
-    'clear': '🌙',
-    'partly cloudy': '⛅',
-    'hazy': '🌤️',
-    "Nắng": "☀️", "Mưa": "🌧️", "Mây": "⛅",
-    "Bão": "🌪️", "Sương mù": "🌫️", "Giông bão": "⛈️",
-    "Nhiều mây": "☁️", "Gió": "💨", "Lạnh": "❄️", "Nóng": "🔥"
-}
-
-class WeatherTracker:
+class WeatherAirQualityTracker:
     def __init__(self):
-        self.base_url = "https://www.accuweather.com/vi/vn"
+        """Initialize the weather and air quality tracker"""
+        self.api_key = "NULL"
+        self.weather_url = "https://api.openweathermap.org/data/2.5/weather"
+        self.air_quality_url = "https://api.openweathermap.org/data/2.5/air_pollution"
+        
+        # Map of supported cities
         self.cities = {
-            'tan_an': {'id': '354470', 'name': 'Tân An', 'region': 'Long An'},
-            'hcmc': {'id': '353981', 'name': 'TP Hồ Chí Minh', 'region': 'Hồ Chí Minh'},
-            'hanoi': {'id': '353412', 'name': 'Hà Nội', 'region': 'Hà Nội'},
-            'thu_duc': {'id': '414495', 'name': 'Thủ Đức', 'region': 'Hồ Chí Minh'},
-            'di_an': {'id': '352247', 'name': 'Dĩ An', 'region': 'Bình Dương'}
-        }
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-        self.logger = logging.getLogger(__name__)
-
-    @lru_cache(maxsize=32)
-    def get_city_url(self, city_key: str) -> Optional[str]:
-        if city := self.cities.get(city_key):
-            city_name = city['name'].lower().replace(' ', '-')
-            return f"{self.base_url}/{city_name}/{city['id']}/weather-forecast/{city['id']}"
-        return None
-
-    def fetch_city_weather(self, city_key: str) -> Optional[Dict]:
-        try:
-            city_url = self.get_city_url(city_key)
-            if not city_url:
-                return None
-
-            response = requests.get(city_url, headers=self.headers, timeout=10)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            city = self.cities[city_key]
-            current_weather = {
-                'location': f"{city['name']}, {city['region']}",
-                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            "Tân An": {
+                "id": 1567069,
+                "region": "Long An",
+                "lat": 10.5379,
+                "lon": 106.4041
+            },
+            "TP Hồ Chí Minh": {
+                "id": 1566083,
+                "region": "Hồ Chí Minh",
+                "lat": 10.8231,
+                "lon": 106.6297
+            },
+            "Hà Nội": {
+                "id": 1581130,
+                "region": "Hà Nội",
+                "lat": 21.0245,
+                "lon": 105.8412
+            },
+            "Thủ Đức": {
+                "id": 1566559,
+                "region": "Hồ Chí Minh",
+                "lat": 10.8692,
+                "lon": 106.7503
+            },
+            "Dĩ An": {
+                "id": 1582720,
+                "region": "Bình Dương",
+                "lat": 10.9082,
+                "lon": 106.7667
             }
+        }
 
-            if temp := soup.find('div', {'class': 'temp'}):
-                current_weather['temperature'] = temp.text.strip()
-
-            if phrase := soup.find('span', {'class': 'phrase'}):
-                current_weather['condition'] = phrase.text.strip()
-
-            if air_quality := soup.find('span', {'class': 'air-quality-module__row__category'}):
-                current_weather['air_quality'] = air_quality.text.strip()
-
-            return current_weather
-
-        except Exception as e:
-            self.logger.error(f"Lỗi khi lấy thời tiết cho {city_key}: {str(e)}")
-            return None
+        # Weather condition icons mapping
+        self.weather_icons = {
+            "Clear": "☀️",
+            "Clouds": "☁️",
+            "Rain": "🌧️",
+            "Drizzle": "🌦️",
+            "Thunderstorm": "⛈️",
+            "Snow": "❄️",
+            "Mist": "🌫️",
+            "Smoke": "🌫️",
+            "Haze": "🌫️",
+            "Dust": "🌫️",
+            "Fog": "🌫️",
+            "Sand": "🌫️",
+            "Ash": "🌫️",
+            "Squall": "🌪️",
+            "Tornado": "🌪️"
+        }
 
     def fetch_weather_data(self) -> Dict:
-        weather_data = {}
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            future_to_city = {executor.submit(self.fetch_city_weather, city_key): city_key 
-                            for city_key in self.cities}
+        """
+        Fetch weather and air quality data for all configured cities
+        
+        Returns:
+            Dict: Weather and air quality data for each city
+        """
+        try:
+            weather_data = {}
             
-            for future in future_to_city:
-                city_key = future_to_city[future]
-                if result := future.result():
-                    weather_data[city_key] = result
+            for city_name, city_info in self.cities.items():
+                try:
+                    # Get weather data
+                    weather_response = self._fetch_weather(city_info['id'])
+                    
+                    # Get air quality data
+                    air_quality_response = self._fetch_air_quality(
+                        city_info['lat'], 
+                        city_info['lon']
+                    )
+                    
+                    # Combine the data
+                    weather_data[city_name] = {
+                        "location": f"{city_name}, {city_info['region']}",
+                        "temperature": f"{weather_response['main']['temp']:.1f}°C",
+                        "feels_like": f"{weather_response['main']['feels_like']:.1f}°C",
+                        "humidity": f"{weather_response['main']['humidity']}%",
+                        "wind_speed": f"{weather_response['wind']['speed'] * 3.6:.1f} km/h",
+                        "condition": weather_response['weather'][0]['description'].capitalize(),
+                        "condition_main": weather_response['weather'][0]['main'],
+                        "air_quality": self._get_air_quality_description(
+                            air_quality_response['list'][0]['main']['aqi']
+                        ),
+                        "pm25": f"{air_quality_response['list'][0]['components']['pm2_5']:.1f}",
+                        "timestamp": datetime.now(Config.VN_TIMEZONE).strftime('%H:%M:%S')
+                    }
+                except Exception as e:
+                    print(f"Error fetching data for {city_name}: {str(e)}")
+                    continue
+            
+            if not weather_data:
+                raise Exception("Không thể lấy dữ liệu thời tiết cho bất kỳ thành phố nào")
+            
+            return weather_data
+            
+        except Exception as e:
+            raise Exception(f"🚨 Lỗi khi lấy dữ liệu thời tiết: {str(e)}")
 
-        return weather_data
-    
-    def escape_markdown_v2(self, text: str) -> str:
-        escape_chars = r'_*[]()~`>#+-=|{}.!'
-        return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
+    def _fetch_weather(self, city_id: int) -> Dict:
+        """Fetch weather data for a specific city"""
+        try:
+            response = requests.get(
+                self.weather_url,
+                params={
+                    "id": city_id,
+                    "appid": self.api_key,
+                    "units": "metric",
+                    "lang": "vi"
+                },
+                timeout=10
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            raise Exception(f"Lỗi khi lấy dữ liệu thời tiết: {str(e)}")
+
+    def _fetch_air_quality(self, lat: float, lon: float) -> Dict:
+        """Fetch air quality data for specific coordinates"""
+        try:
+            response = requests.get(
+                self.air_quality_url,
+                params={
+                    "lat": lat,
+                    "lon": lon,
+                    "appid": self.api_key
+                },
+                timeout=10
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            raise Exception(f"Lỗi khi lấy dữ liệu chất lượng không khí: {str(e)}")
+
+    def _get_air_quality_description(self, aqi: int) -> str:
+        """Convert AQI number to descriptive text"""
+        descriptions = {
+            1: "Tốt",
+            2: "Khá",
+            3: "Trung bình",
+            4: "Kém",
+            5: "Rất xấu"
+        }
+        return descriptions.get(aqi, "Không xác định ⚪")
 
     def format_weather_data(self, weather_data: Dict) -> str:
-        lines = [
-            "🌤️ *DỰ BÁO THỜI TIẾT HÔM NAY* 🌡️\n",
-            f"📅 *Ngày:* `{datetime.now().strftime('%d/%m/%Y')}`\n"
-        ]
+        """Format weather data into a readable message"""
+        try:
+            message = [
+                "🌤️ **BẢN TIN THỜI TIẾT & CHẤT LƯỢNG KHÔNG KHÍ**\n",
+                f"🕒 Cập nhật lúc `{datetime.now(Config.VN_TIMEZONE).strftime('%H:%M:%S')}` 🇻🇳\n"
+            ]
 
-        for data in weather_data.values():
-            condition_icon = next(
-                (icon for key, icon in weather_icons.items() if key.lower() in data.get("condition", "").lower()), "🌍"
-            )
+            for city_name, data in weather_data.items():
+                # Get weather icon
+                icon = self.weather_icons.get(data['condition_main'], "🌡️")
+                
+                # Format city data
+                city_info = [
+                    f"📍 **{data['location']}**",
+                    f"{icon} {data['condition']}",
+                    f"🌡️ Nhiệt độ: `{data['temperature']}`",
+                    f"🌡️ Cảm giác như: `{data['feels_like']}`",
+                    f"💧 Độ ẩm: `{data['humidity']}`",
+                    f"💨 Tốc độ gió: `{data['wind_speed']}`",
+                    f"🌬️ Chất lượng không khí: `{data['air_quality']}`",
+                    f"😷 Nồng độ PM2.5: `{data['pm25']} µg/m³`\n"
+                ]
+                message.extend(city_info)
 
-            # Escape text để tránh lỗi MarkdownV2
-            location = self.escape_markdown_v2(data['location'])
-            condition = self.escape_markdown_v2(data.get("condition", "N/A"))
-            temperature = self.escape_markdown_v2(data.get("temperature", "N/A"))
-            air_quality = self.escape_markdown_v2(data.get("air_quality", "N/A"))
-
-            lines.extend([
-                f"📍 *{location}*",
-                f"   {condition_icon} *➡️ {condition} ⬅️*",
-                f"   🌡️ *Nhiệt độ:* *{temperature}*",
-                f"   🌬️ *Chất lượng không khí:* *{air_quality}*",
-                "──────────────"
-            ])
-
-        lines.append(f"🕒 *Cập nhật:* `{datetime.now().strftime('%H:%M:%S')} ⏳` 🇻🇳")
-
-        # Chuyển danh sách thành chuỗi
-        message = "\n".join(lines)
-
-        return message
+            return "\n".join(message)
+        except Exception as e:
+            raise Exception(f"Lỗi khi định dạng dữ liệu thời tiết: {str(e)}")

@@ -2,134 +2,150 @@
 
 BéHoà-4o là một chatbot Telegram thông minh, được phát triển bằng Python, tích hợp **GPT-4o** để hỗ trợ trò chuyện và nhiều tính năng hữu ích khác.
 
----
+## ✨ Tính Năng Chính
 
-## 🚀 Tính năng nổi bật
-- 💬 **Chat thông minh** với GPT-4o
-- 🎨 **Tạo hình ảnh** với DALL·E 3
-- 💰 **Tra cứu giá vàng** (SJC & PNJ)
-- 💱 **Xem tỷ giá ngoại tệ** (Vietcombank)
-- 🪙 **Theo dõi giá tiền ảo** (Binance)
-- ⏰ **Xem thời gian** (Dương lịch & Âm lịch)
-- 🔄 **Quản lý tin nhắn** theo giai đoạn
+- 💬 **Chat Thông Minh** - Tích hợp GPT-4o cho trò chuyện tự nhiên
+- 🎨 **Tạo Hình Ảnh** - Tạo hình ảnh bằng DALL·E 3
+- 💰 **Theo Dõi Giá Vàng** - Cập nhật giá vàng SJC & PNJ theo thời gian thực
+- 💱 **Tỷ Giá Ngoại Tệ** - Tỷ giá Vietcombank cập nhật liên tục
+- 🪙 **Giá Tiền Ảo** - Giá tiền điện tử từ Binance theo thời gian thực
+- 🌡️ **Thông Tin Thời Tiết** - Thời tiết và chất lượng không khí hiện tại
+- ⏰ **Thông Tin Thời Gian** - Cả lịch Dương và Âm
 
----
+## 🛠️ Yêu Cầu Hệ Thống
 
-## 🛠 Yêu cầu hệ thống
-- **Python** 3.8+
-- **pip** (Python package installer)
-- **Telegram Bot Token**
-- **OpenAI API Key**
+- Python 3.8 trở lên
+- Telegram Bot Token
+- OpenAI API Key
+- Các gói Python cần thiết (xem `requirements.txt`)
 
----
+## ⚡ Hướng Dẫn Cài Đặt
 
-## 📦 Cài đặt
-### 1️⃣ Clone repository
+1. **Tải source code về máy**
 ```bash
 git clone https://github.com/SMLnobita/behoa-telegram-bot.git
 cd behoa-telegram-bot
 ```
-### 2️⃣ Cài đặt dependencies
+
+2. **Cài đặt thư viện**
 ```bash
 pip install -r requirements.txt
 ```
-### 3️⃣ Cấu hình biến môi trường
-Tạo tệp `.env` và thêm thông tin:
+
+3. **Thiết lập biến môi trường**
+Tạo file `.env` với nội dung:
 ```ini
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 OPENAI_API_KEY=your_openai_api_key
 ```
 
----
-
-## 🚀 Khởi chạy bot
-Chạy lệnh sau để khởi động bot:
+4. **Khởi chạy bot**
 ```bash
 python main.py
 ```
 
----
+## 🤖 Các Lệnh Bot
 
-## 📂 Cấu trúc dự án
+| Lệnh | Mô Tả |
+|---------|-------------|
+| `/start` | Khởi động bot và xóa lịch sử chat |
+| `/help` | Xem hướng dẫn sử dụng |
+| `/clear` | Xóa lịch sử chat hiện tại |
+| `/time` | Xem thời gian hiện tại (cả 2 lịch) |
+| `/info` | Xem thông tin người dùng |
+| `/image <mô tả>` | Tạo hình ảnh từ mô tả |
+| `/vang` | Xem giá vàng |
+| `/ngoaite` | Xem tỷ giá ngoại tệ |
+| `/tienao` | Xem giá tiền ảo |
+| `/thoitiet` | Xem thời tiết và chất lượng không khí |
+
+## 🔄 Hệ Thống Giới Hạn Tin Nhắn
+
+Bot có cơ chế giới hạn tin nhắn theo các giai đoạn:
+
+| Giai Đoạn | Số Tin Nhắn | Điều Kiện |
+|-------|----------|-----------|
+| 1️⃣ Ban Đầu | 5 tin nhắn | Mặc định |
+| 2️⃣ Mở Rộng | 10 tin nhắn | Sau khi nhấn "Tiếp tục nhắn" |
+| 3️⃣ Premium | 15 tin nhắn | Sau khi nhập key |
+
+- ⏱️ Thời gian chờ giữa các tin nhắn: 3 giây
+- 🔑 Key để mở khóa giai đoạn Premium: "Behoane"
+
+## 📁 Cấu Trúc Dự Án
+
 ```
 behoa-telegram-bot/
-├── config.py               # Cấu hình và biến môi trường
-├── enums.py                # Định nghĩa các enum
-├── keywords.py             # Danh sách từ khóa
-├── main.py                 # Điểm khởi động ứng dụng
-├── models.py               # Định nghĩa các model
+├── config.py               # Cấu hình môi trường
+├── enums.py               # Định nghĩa enum
+├── keywords.py            # Danh sách từ khóa
+├── main.py               # Điểm khởi đầu ứng dụng
+├── models.py             # Các model dữ liệu
 │
-├── handlers/               # Xử lý tin nhắn
+├── handlers/             # Xử lý tin nhắn
 │   ├── callback_handler.py
 │   ├── chat_handler.py
-│   ├── message_commands.py
+│   └── message_commands.py
 │
-├── managers/               # Quản lý trạng thái
+├── managers/             # Quản lý trạng thái
 │   └── user_manager.py
 │
-├── trackers/               # Theo dõi giá cả
+├── trackers/            # Theo dõi giá cả
 │   ├── crypto_tracker.py
 │   ├── currency_tracker.py
 │   ├── gold_tracker.py
+│   └── weather_tracker.py
 │
-└── utils/                  # Tiện ích
+└── utils/               # Tiện ích
     ├── message_handler.py
     └── openai_handler.py
 ```
 
+## 🌟 Chi Tiết Tính Năng
+
+### 💬 Chat Thông Minh
+- Xử lý ngôn ngữ tự nhiên với GPT-4o
+- Hội thoại theo ngữ cảnh
+- Hỗ trợ đa ngôn ngữ
+- Quản lý lịch sử tin nhắn
+
+### 🎨 Tạo Hình Ảnh
+- Sử dụng DALL·E 3
+- Mô tả bằng ngôn ngữ tự nhiên
+- Chất lượng hình ảnh cao
+- Đa dạng phong cách và ngữ cảnh
+
+### 💹 Thông Tin Tài Chính
+- Giá vàng theo thời gian thực (SJC & PNJ)
+- Tỷ giá ngoại tệ cập nhật liên tục
+- Dữ liệu thị trường tiền điện tử
+- Cập nhật giá thường xuyên
+
+### ⏰ Thời Gian và Thời Tiết
+- Hệ thống lịch kép (Dương lịch & Âm lịch)
+- Thời tiết nhiều thành phố
+- Thông tin chất lượng không khí
+- Cập nhật thường xuyên
+
+## 🤝 Đóng Góp
+
+Chúng tôi rất hoan nghênh mọi đóng góp! Đây là cách bạn có thể giúp:
+
+1. Fork repository này
+2. Tạo nhánh tính năng mới
+3. Commit các thay đổi của bạn
+4. Push lên nhánh của bạn
+5. Tạo Pull Request
+
+## 📝 Giấy Phép
+
+Dự án này được cấp phép theo Giấy phép MIT - xem file LICENSE để biết thêm chi tiết.
+
+## 👥 Liên Hệ
+
+- Người phát triển: [@smlnobita](https://t.me/smlnobita) trên Telegram
+- Báo lỗi: Sử dụng GitHub issue tracker
+
 ---
 
-## 📝 Danh sách lệnh bot
-| Lệnh | Mô tả |
-|------------|-------------------------------|
-| `/start` | Khởi động bot và xóa lịch sử chat |
-| `/help` | Hướng dẫn sử dụng bot |
-| `/clear` | Xóa lịch sử chat |
-| `/time` | Xem thời gian hiện tại |
-| `/info` | Xem thông tin người dùng |
-| `/image <mô tả>` | Tạo hình ảnh từ mô tả |
-| `/vang` | Xem giá vàng (SJC & PNJ) |
-| `/ngoaite` | Xem tỷ giá ngoại tệ (Vietcombank) |
-| `/tienao` | Xem giá tiền ảo (Binance) |
-
----
-
-## ⏳ Hệ thống giới hạn tin nhắn
-BéHoà-4o có cơ chế giới hạn tin nhắn theo các giai đoạn:
-
-| Giai đoạn | Số tin nhắn | Điều kiện |
-|-----------|------------|------------|
-| **1** | 5 tin | Mặc định ban đầu |
-| **2** | 10 tin | Sau khi nhấn "Tiếp tục nhắn" |
-| **3** | 15 tin | Sau khi nhập key |
-
-⏳ **Thời gian chờ giữa các tin nhắn:** 3 giây
-
----
-
-## 🛠 Hướng dẫn phát triển
-### Thêm tính năng mới
-1. **Tạo handler mới** trong thư mục `handlers/`
-2. **Đăng ký handler** trong `main.py`
-3. **Cập nhật tài liệu** để người dùng biết cách sử dụng
-
----
-
-## 🤝 Đóng góp
-Mọi đóng góp đều được chào đón! Hãy tạo **issue** hoặc **pull request** để giúp cải thiện bot.
-
----
-
-## 📜 Giấy phép
-BéHoà-4o được phát hành theo **MIT License**.
-
----
-
-## 👤 Tác giả
-- **[@smlnobita](https://t.me/smlnobita)** (Telegram)
-
-## 📞 Liên hệ
-Nếu có bất kỳ câu hỏi hoặc góp ý, hãy liên hệ qua **Telegram**: [@smlnobita](https://t.me/smlnobita).
-
-🔥 **Cảm ơn bạn đã sử dụng BéHoà-4o! Chúc bạn có trải nghiệm tuyệt vời!** 🎉
-
+Được tạo với ❤️ bởi đội ngũ BéHoà-4o

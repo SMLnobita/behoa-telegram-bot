@@ -60,3 +60,9 @@ taohoa_keywords = [
     "ai thiết kế bạn", "ai thiet ke ban",
     "ai sáng lập ra bạn", "ai sang lap ra ban", "ai tạo ra bạn", "ai tao ra ban", "bạn do ai lam ra", "ban do ai lam ra"
 ]
+
+thoitiet_keywords = ["thời tiết", "thoi tiet", "thời tiết hôm nay", "thoi tiet hom nay", "thời tiết ngày mai", "thoi tiet ngay mai",
+                     "thoitiet", "nhiệt độ", "nhiet do", "nhiệt độ hôm nay", "nhiet do hom nay", "nhiệt độ ngày mai", "nhiet do ngay mai",
+                     "nhiệt độ hôm qua", "nhiet do hom qua", "nhiệt độ hiện tại", "nhiet do hien tai", "nhiệt độ ở đâu", "nhiet do o dau",
+                     "nhietdo","nhiet do hom nay"
+]
