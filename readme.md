@@ -76,9 +76,9 @@ Bot có cơ chế giới hạn tin nhắn theo các giai đoạn:
 
 ```
 behoa-telegram-bot/
-├── config.py               # Cấu hình môi trường
-├── enums.py               # Định nghĩa enum
-├── keywords.py            # Danh sách từ khóa
+├── config.py             # Cấu hình môi trường
+├── enums.py              # Định nghĩa enum
+├── keywords.py           # Danh sách từ khóa
 ├── main.py               # Điểm khởi đầu ứng dụng
 ├── models.py             # Các model dữ liệu
 │
