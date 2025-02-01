@@ -45,34 +45,6 @@ class ChatHandler:
 
         self._process_chat_message(message, user_id, user_state)
 
-    def _handle_key_input(self, message, user_state):
-        """
-        Xử lý tin nhắn khi người dùng đang nhập key
-        
-        Returns:
-            bool: True nếu tiếp tục xử lý tin nhắn, False nếu dừng lại
-        """
-        if user_state.waiting_for_key:
-            if message.text == MessageLimits.VALID_KEY:
-                user_state.stage = UserStage.KEY_USED
-                user_state.waiting_for_key = False
-                remaining = MessageLimits.FINAL_LIMIT - user_state.message_count
-                self.bot.send_message(
-                    message.chat.id, 
-                    f"✅ Key hợp lệ! Bạn đã được cấp thêm {remaining} tin nhắn."
-                )
-            else:
-                # Hiển thị thông báo lỗi và menu với nút nhập key
-                user_state.waiting_for_key = False
-                menu = MessageHandler.create_menu_markup(user_state)
-                self.bot.send_message(
-                    message.chat.id,
-                    "❌ Key không hợp lệ!\n🔑 Vui lòng thử lại.\n🧹 Clear xoá history để chat tiếp",
-                    reply_markup=menu
-                )
-            return False
-        return True
-
     def _check_limits(self, message, user_id, user_state):
         """
         Kiểm tra giới hạn tin nhắn và thời gian chờ
@@ -105,6 +77,34 @@ class ChatHandler:
             )
             return False
 
+        return True
+
+    def _handle_key_input(self, message, user_state):
+        """
+        Xử lý tin nhắn khi người dùng đang nhập key
+        
+        Returns:
+            bool: True nếu tiếp tục xử lý tin nhắn, False nếu dừng lại
+        """
+        if user_state.waiting_for_key:
+            if message.text == MessageLimits.VALID_KEY:
+                user_state.stage = UserStage.KEY_USED
+                user_state.waiting_for_key = False
+                remaining = MessageLimits.FINAL_LIMIT - user_state.message_count
+                self.bot.send_message(
+                    message.chat.id, 
+                    f"✅ Key hợp lệ! Bạn đã được cấp thêm {remaining} tin nhắn."
+                )
+            else:
+                # Hiển thị thông báo lỗi và menu với nút nhập key
+                user_state.waiting_for_key = False
+                menu = MessageHandler.create_menu_markup(user_state)
+                self.bot.send_message(
+                    message.chat.id,
+                    "❌ Key không hợp lệ!\n🔑 Vui lòng thử lại.\n🧹 Clear xoá history để chat tiếp",
+                    reply_markup=menu
+                )
+            return False
         return True
 
     def _handle_keywords(self, message, user_id):
@@ -151,7 +151,7 @@ class ChatHandler:
         if any(keyword in text for keyword in keywords.name_keywords):
             self.bot.send_message(
                 user_id,
-                "🤖 **Mình là BéHoà-4o, một chatbot AI thông minh!**",
+                "🤖 **Mình là BéHoà-GPT, một chatbot AI thông minh!**",
                 parse_mode="Markdown",
                 reply_to_message_id=message.message_id
             )
@@ -261,7 +261,7 @@ class ChatHandler:
         if any(keyword in text for keyword in keywords.taohoa_keywords):
             self.bot.send_message(
                 user_id,
-                "🤖 **Mình là BéHoà-4o, một chatbot AI thông minh!**\n"
+                "🤖 **Mình là BéHoà-GPT, một chatbot AI thông minh!**\n"
                 "🤖 **Mình được tạo ra bởi @smlnobita!**",
                 parse_mode="Markdown",
                 reply_to_message_id=message.message_id
@@ -269,7 +269,6 @@ class ChatHandler:
             return True
 
         return False
-    
 
     def _process_chat_message(self, message, user_id, user_state):
         """Xử lý tin nhắn chat thông thường với OpenAI"""
