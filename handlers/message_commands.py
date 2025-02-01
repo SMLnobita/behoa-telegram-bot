@@ -29,7 +29,7 @@ class MessageCommands:
         self.user_manager.clear_user_data(user_id)
         
         text = (
-            "🤖 **Chào mừng bạn đến với BéHoà_GPT trên Telegram!**\n\n"
+            "🤖 **Chào mừng bạn đến với BéHoà-GPT trên Telegram!**\n\n"
             f"{MessageHandler.format_time_message()}\n\n"
             "🔹 Bạn có thể bắt đầu chat ngay.\n"
             "🔹 Sử dụng `/help` để xem hướng dẫn chi tiết.\n"
@@ -60,7 +60,7 @@ class MessageCommands:
     def help_message(self, message):
         """Xử lý lệnh /help"""
         help_text = (
-            "🤖 **Hướng dẫn sử dụng BéHoà_GPT Bot**\n\n"
+            "🤖 **Hướng dẫn sử dụng BéHoà-GPT Bot**\n\n"
             "**📝 Các lệnh cơ bản:**\n"
             "• `/start` - Khởi động bot và xóa lịch sử chat\n"
             "• `/help` - Hiển thị hướng dẫn sử dụng\n"

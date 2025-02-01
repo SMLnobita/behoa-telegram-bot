@@ -151,7 +151,7 @@ class ChatHandler:
         if any(keyword in text for keyword in keywords.name_keywords):
             self.bot.send_message(
                 user_id,
-                "🤖 **Mình là BéHoà-4o, một chatbot AI thông minh và thân thiện!**",
+                "🤖 **Mình là BéHoà-4o, một chatbot AI thông minh!**",
                 parse_mode="Markdown",
                 reply_to_message_id=message.message_id
             )
@@ -261,7 +261,7 @@ class ChatHandler:
         if any(keyword in text for keyword in keywords.taohoa_keywords):
             self.bot.send_message(
                 user_id,
-                "🤖 **Mình là BéHoà-4o, một chatbot AI thông minh và thân thiện!**\n"
+                "🤖 **Mình là BéHoà-4o, một chatbot AI thông minh!**\n"
                 "🤖 **Mình được tạo ra bởi @smlnobita!**",
                 parse_mode="Markdown",
                 reply_to_message_id=message.message_id
@@ -277,7 +277,7 @@ class ChatHandler:
         user_state.message_count += 1
 
         chat_history = MessageHandler.get_chat_history(user_id)
-        messages = [{"role": "system", "content": "Bạn là một chatbot AI thông minh và thân thiện."}]
+        messages = [{"role": "system", "content": "Bạn là một chatbot AI thông minh."}]
 
         # Xử lý lịch sử chat
         for chat in chat_history:

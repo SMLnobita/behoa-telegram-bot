@@ -90,7 +90,7 @@ class TelegramBot:
 
     def run(self):
         """Khởi chạy bot"""
-        print("🚀 Chatbot GPT-4o-mini trên Telegram đang chạy...")
+        print("🚀 Chatbot GPT-4o trên Telegram đang chạy...")
         print(f"⏰ Khởi động lúc: {MessageHandler.format_time_message()}")
         try:
             self.bot.polling(none_stop=True)

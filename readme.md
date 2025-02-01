@@ -1,6 +1,6 @@
-# 🤖 BéHoà-GPT Telegram Bot
+# 🤖 BéHoà-4o Telegram Bot
 
-BéHoà-GPTlà một chatbot Telegram thông minh, được phát triển bằng Python, tích hợp **GPT-4o-mini** để hỗ trợ trò chuyện và nhiều tính năng hữu ích khác.
+BéHoà-4o là một chatbot Telegram thông minh, được phát triển bằng Python, tích hợp **GPT-4o** để hỗ trợ trò chuyện và nhiều tính năng hữu ích khác.
 
 ## ✨ Tính Năng Chính
 
@@ -148,4 +148,4 @@ Dự án này được cấp phép theo Giấy phép MIT - xem file LICENSE đ�
 
 ---
 
-Được tạo với ❤️ bởi cá nhân BéHoà-GPT
+Được tạo với ❤️ bởi đội ngũ BéHoà-4o
