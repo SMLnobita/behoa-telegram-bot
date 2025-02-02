@@ -17,32 +17,20 @@ class WeatherAirQualityTracker:
             "Tân An": {
                 "id": 1567069,
                 "region": "Long An",
-                "lat": 10.5379,
-                "lon": 106.4041
+                "lat": 10.5333,
+                "lon": 106.4167
             },
             "TP Hồ Chí Minh": {
                 "id": 1566083,
                 "region": "Hồ Chí Minh",
-                "lat": 10.8231,
-                "lon": 106.6297
+                "lat": 10.75,
+                "lon": 106.6667
             },
             "Hà Nội": {
                 "id": 1581130,
                 "region": "Hà Nội",
                 "lat": 21.0245,
                 "lon": 105.8412
-            },
-            "Thủ Đức": {
-                "id": 1566559,
-                "region": "Hồ Chí Minh",
-                "lat": 10.8692,
-                "lon": 106.7503
-            },
-            "Dĩ An": {
-                "id": 1582720,
-                "region": "Bình Dương",
-                "lat": 10.9082,
-                "lon": 106.7667
             }
         }
 
