@@ -1,4 +1,4 @@
-# 🤖 BéHoà-GPT Telegram Bot
+# 🤖 BéHoà-GPT Telegram Bot NNN
 
 BéHoà-GPT là một chatbot Telegram thông minh, được phát triển bằng Python, tích hợp **GPT-4o-mini** để hỗ trợ trò chuyện và nhiều tính năng hữu ích khác.
 
